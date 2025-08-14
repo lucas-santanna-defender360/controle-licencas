@@ -44,6 +44,71 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .sync-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .sync-status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .sync-status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .sync-status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .config-panel {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .config-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: end;
+        }
+
+        .config-field {
+            flex: 1;
+        }
+
+        .config-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .config-field input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .config-field input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
         .tabs {
             display: flex;
             justify-content: center;
@@ -160,6 +225,16 @@
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        }
+
         .btn-danger {
             background: linear-gradient(45deg, #ff6b6b, #ee5a52);
             color: white;
@@ -254,6 +329,12 @@
             border: 1px solid #ffeaa7;
         }
 
+        .alert-info {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #97d7ff;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -297,6 +378,11 @@
             gap: 10px;
         }
 
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -318,6 +404,10 @@
             .tabs {
                 flex-direction: column;
             }
+
+            .config-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -325,73 +415,40 @@
     <div class="container">
         <div class="header">
             <h1>📋 Sistema de Controle de Licenças</h1>
-            <p>Gerencie suas licenças de software de forma simples e eficiente</p>
-        <!-- Backup Tab -->
-        <div id="backup" class="tab-content">
-            <div class="section">
-                <h3>💾 Gerenciamento de Dados</h3>
-                <p style="margin-bottom: 20px; color: #6c757d; line-height: 1.6;">
-                    Use estas opções para fazer backup e restaurar seus dados. Os dados são salvos automaticamente 
-                    a cada modificação, mas você pode fazer backups manuais e importar dados de outros arquivos.
-                </p>
-                
-                <div class="form-group">
-                    <button class="btn btn-primary" onclick="exportData()">📤 Exportar Dados</button>
-                    <button class="btn btn-primary" onclick="importData()">📥 Importar Dados</button>
-                </div>
-                
-                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #667eea;">
-                    <h4 style="margin-bottom: 15px; color: #495057;">ℹ️ Como usar o sistema de backup:</h4>
-                    <ul style="color: #6c757d; line-height: 1.8;">
-                        <li><strong>Backup Automático:</strong> A cada alteração (adicionar/excluir), um arquivo é baixado automaticamente</li>
-                        <li><strong>Exportar Dados:</strong> Baixa um backup completo manual com timestamp</li>
-                        <li><strong>Importar Dados:</strong> Carrega dados de um arquivo de backup anterior</li>
-                        <li><strong>Formato:</strong> Os dados são salvos em formato JSON para compatibilidade</li>
-                    </ul>
-                </div>
-
-                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 10px; border-left: 4px solid #ffc107;">
-                    <p style="margin: 0; color: #856404;">
-                        <strong>💡 Dica:</strong> Mantenha backups regulares em local seguro. 
-                        Os arquivos são pequenos e podem ser armazenados em nuvem ou pen drive.
-                    </p>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>📊 Estatísticas do Sistema</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4 id="backupTotalClients">0</h4>
-                        <p>Clientes Cadastrados</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="backupTotalLicenses">0</h4>
-                        <p>Licenças Gerenciadas</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="backupBitdefender">0</h4>
-                        <p>BitDefender</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="backupKaseya">0</h4>
-                        <p>Kaseya</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="backupAcronis">0</h4>
-                        <p>Acronis</p>
-                    </div>
-                </div>
+            <p>Gerencie suas licenças de software com sincronização automática</p>
+            <div id="syncStatus" class="sync-status disconnected">
+                🔴 Desconectado - Configure as credenciais
             </div>
         </div>
 
+        <!-- Painel de Configuração -->
+        <div id="configPanel" class="config-panel">
+            <h3>⚙️ Configuração do Google Sheets</h3>
+            <div class="config-row">
+                <div class="config-field">
+                    <label>API Key do Google:</label>
+                    <input type="password" id="apiKey" placeholder="Sua API Key do Google Cloud Console">
+                </div>
+                <div class="config-field">
+                    <label>ID da Planilha:</label>
+                    <input type="text" id="sheetId" placeholder="ID da planilha do Google Sheets">
+                </div>
+                <div>
+                    <button class="btn btn-success" onclick="testConnection()">🔗 Conectar</button>
+                </div>
+            </div>
+            <div class="alert alert-info">
+                <strong>📋 Como obter:</strong><br>
+                <strong>API Key:</strong> Google Cloud Console → APIs & Services → Credentials<br>
+                <strong>Sheet ID:</strong> URL da planilha entre /d/ e /edit
+            </div>
         </div>
 
         <div class="tabs">
             <button class="tab-button active" onclick="showTab('dashboard')">📊 Dashboard</button>
             <button class="tab-button" onclick="showTab('clients')">👥 Clientes</button>
             <button class="tab-button" onclick="showTab('licenses')">🔑 Licenças</button>
-            <button class="tab-button" onclick="showTab('backup')">💾 Backup</button>
+            <button class="tab-button" onclick="showTab('sync')">☁️ Sincronização</button>
         </div>
 
         <!-- Dashboard Tab -->
@@ -540,662 +597,226 @@
                 </div>
             </div>
         </div>
+
+        <!-- Sync Tab -->
+        <div id="sync" class="tab-content">
+            <div class="section">
+                <h3>☁️ Status da Sincronização</h3>
+                <div id="syncInfo" class="alert alert-info">
+                    <strong>ℹ️ Configure as credenciais acima para ativar a sincronização automática.</strong>
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="syncData()">🔄 Sincronizar Manualmente</button>
+                    <button class="btn btn-success" onclick="testConnection()">🧪 Testar Conexão</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📊 Estatísticas da Sincronização</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4 id="syncTotalClients">0</h4>
+                        <p>Clientes Sincronizados</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="syncTotalLicenses">0</h4>
+                        <p>Licenças Sincronizadas</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="lastSyncTime">Nunca</h4>
+                        <p>Última Sincronização</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Dados armazenados em memória
+        // Variáveis globais
         let clients = [];
         let licenses = [];
         let nextClientId = 1;
         let nextLicenseId = 1;
+        let isConnected = false;
+        let config = {
+            apiKey: '',
+            sheetId: ''
+        };
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            loadData(); // Carregar dados salvos
+            loadConfig();
             updateDashboard();
             updateClientsTable();
             updateLicensesTable();
             updateClientSelect();
+            if (config.apiKey && config.sheetId) {
+                testConnection();
+            }
         });
 
-        // Funções de persistência de dados usando múltiplos métodos
-        function saveData() {
-            const data = {
-                clients: clients,
-                licenses: licenses,
-                nextClientId: nextClientId,
-                nextLicenseId: nextLicenseId,
-                lastSaved: new Date().toISOString()
-            };
-            
+        // Configuração e conexão
+        function loadConfig() {
             try {
-                const jsonData = JSON.stringify(data);
-                let savedSuccessfully = false;
-                
-                // Método 1: Tentar localStorage primeiro
-                try {
-                    if (typeof(Storage) !== "undefined") {
-                        localStorage.setItem('licenseControlData', jsonData);
-                        savedSuccessfully = true;
-                        console.log('✅ Dados salvos via localStorage');
-                    }
-                } catch (e) {
-                    console.log('⚠️ localStorage não disponível, tentando cookies...');
+                const savedConfig = localStorage.getItem('sheetsConfig');
+                if (savedConfig) {
+                    config = JSON.parse(savedConfig);
+                    document.getElementById('apiKey').value = config.apiKey;
+                    document.getElementById('sheetId').value = config.sheetId;
                 }
-                
-                // Método 2: Fallback para cookies se localStorage falhar
-                if (!savedSuccessfully) {
-                    try {
-                        // Dividir dados em chunks menores para evitar limite de cookies
-                        const chunks = chunkString(jsonData, 3000);
-                        document.cookie = `licenseChunks=${chunks.length}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
-                        
-                        chunks.forEach((chunk, index) => {
-                            document.cookie = `licenseData_${index}=${encodeURIComponent(chunk)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
-                        });
-                        
-                        savedSuccessfully = true;
-                        console.log('✅ Dados salvos via cookies');
-                    } catch (e) {
-                        console.error('❌ Erro ao salvar via cookies:', e);
-                    }
-                }
-                
-                // Método 3: Backup automático em arquivo se outros métodos falharem
-                if (!savedSuccessfully) {
-                    console.log('⚠️ Salvamento automático falhou, criando backup em arquivo...');
-                    downloadBackup(data);
-                }
-                
-                // Mostrar indicador visual de salvamento
-                showSaveIndicator(savedSuccessfully);
-                
             } catch (error) {
-                console.error('❌ Erro geral ao salvar dados:', error);
-                showSaveIndicator(false);
+                console.error('Erro ao carregar configuração:', error);
             }
         }
 
-        function loadData() {
+        function saveConfig() {
+            config.apiKey = document.getElementById('apiKey').value.trim();
+            config.sheetId = document.getElementById('sheetId').value.trim();
+            
             try {
-                let data = null;
-                
-                // Método 1: Tentar carregar do localStorage primeiro
-                try {
-                    if (typeof(Storage) !== "undefined") {
-                        const savedData = localStorage.getItem('licenseControlData');
-                        if (savedData) {
-                            data = JSON.parse(savedData);
-                            console.log('✅ Dados carregados do localStorage');
-                        }
-                    }
-                } catch (e) {
-                    console.log('⚠️ Erro ao carregar do localStorage, tentando cookies...');
-                }
-                
-                // Método 2: Fallback para cookies se localStorage falhar
-                if (!data) {
-                    try {
-                        const cookies = document.cookie.split(';');
-                        const chunksCookie = cookies.find(cookie => cookie.trim().startsWith('licenseChunks='));
-                        
-                        if (chunksCookie) {
-                            const numChunks = parseInt(chunksCookie.split('=')[1]);
-                            let combinedData = '';
-                            
-                            for (let i = 0; i < numChunks; i++) {
-                                const chunkCookie = cookies.find(cookie => cookie.trim().startsWith(`licenseData_${i}=`));
-                                if (chunkCookie) {
-                                    combinedData += decodeURIComponent(chunkCookie.split('=')[1]);
-                                }
-                            }
-                            
-                            if (combinedData) {
-                                data = JSON.parse(combinedData);
-                                console.log('✅ Dados carregados dos cookies');
-                            }
-                        }
-                    } catch (e) {
-                        console.log('⚠️ Erro ao carregar dos cookies:', e);
-                    }
-                }
-                
-                // Aplicar dados se encontrados
-                if (data && data.clients && data.licenses) {
-                    clients = data.clients;
-                    licenses = data.licenses;
-                    nextClientId = data.nextClientId || 1;
-                    nextLicenseId = data.nextLicenseId || 1;
-                    
-                    console.log(`📊 Carregados: ${clients.length} clientes, ${licenses.length} licenças`);
+                localStorage.setItem('sheetsConfig', JSON.stringify(config));
+                console.log('✅ Configuração salva');
+            } catch (error) {
+                console.error('❌ Erro ao salvar configuração:', error);
+            }
+        }
+
+        async function testConnection() {
+            if (!document.getElementById('apiKey').value.trim() || !document.getElementById('sheetId').value.trim()) {
+                showSyncStatus('disconnected', '🔴 Configure API Key e Sheet ID');
+                return false;
+            }
+
+            saveConfig();
+            showSyncStatus('loading', '🔄 Testando conexão...');
+
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}?key=${config.apiKey}`
+                );
+
+                if (response.ok) {
+                    isConnected = true;
+                    showSyncStatus('connected', '🟢 Conectado - Sincronização ativa');
+                    document.getElementById('configPanel').style.display = 'none';
+                    await loadDataFromSheets();
                     return true;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-                
-                console.log('ℹ️ Nenhum dado salvo encontrado. Iniciando com dados vazios.');
-                return false;
-                
             } catch (error) {
-                console.error('❌ Erro ao carregar dados:', error);
+                isConnected = false;
+                showSyncStatus('disconnected', `🔴 Erro: ${error.message}`);
+                console.error('Erro de conexão:', error);
                 return false;
             }
         }
 
-        // Função auxiliar para dividir strings em chunks
-        function chunkString(str, length) {
-            const chunks = [];
-            for (let i = 0; i < str.length; i += length) {
-                chunks.push(str.slice(i, i + length));
-            }
-            return chunks;
-        }
+        function showSyncStatus(status, message) {
+            const statusEl = document.getElementById('syncStatus');
+            statusEl.className = `sync-status ${status}`;
+            statusEl.textContent = message;
 
-        // Função para download automático de backup
-        function downloadBackup(data) {
-            try {
-                const jsonData = JSON.stringify(data, null, 2);
-                const blob = new Blob([jsonData], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `licencias_auto_backup_${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                console.log('📁 Backup automático criado');
-            } catch (error) {
-                console.error('❌ Erro ao criar backup automático:', error);
-            }
-        }
-
-        function showSaveIndicator(success = true) {
-            // Criar indicador visual de salvamento
-            let indicator = document.getElementById('saveIndicator');
-            if (!indicator) {
-                indicator = document.createElement('div');
-                indicator.id = 'saveIndicator';
-                indicator.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    color: white;
-                    padding: 10px 20px;
-                    border-radius: 25px;
-                    font-weight: 600;
-                    font-size: 14px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-                    z-index: 1000;
-                    transform: translateX(300px);
-                    transition: all 0.3s ease;
-                `;
-                document.body.appendChild(indicator);
-            }
-            
-            if (success) {
-                indicator.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
-                indicator.innerHTML = '✅ Dados salvos automaticamente!';
+            const syncInfo = document.getElementById('syncInfo');
+            if (status === 'connected') {
+                syncInfo.className = 'alert alert-success';
+                syncInfo.innerHTML = '<strong>✅ Conectado!</strong> Todos os dados são sincronizados automaticamente com o Google Sheets.';
+            } else if (status === 'loading') {
+                syncInfo.className = 'alert alert-warning';
+                syncInfo.innerHTML = '<strong>⏳ Conectando...</strong> Aguarde enquanto testamos a conexão.';
             } else {
-                indicator.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
-                indicator.innerHTML = '⚠️ Erro ao salvar! Verifique os backups.';
-            }
-            
-            // Mostrar indicador
-            indicator.style.transform = 'translateX(0)';
-            
-            // Esconder após 4 segundos
-            setTimeout(() => {
-                indicator.style.transform = 'translateX(300px)';
-            }, 4000);
-        }
-
-        function exportData() {
-            const data = {
-                clients: clients,
-                licenses: licenses,
-                nextClientId: nextClientId,
-                nextLicenseId: nextLicenseId,
-                exportDate: new Date().toISOString(),
-                version: '1.0'
-            };
-            
-            const jsonData = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonData], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `licencias_completo_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            alert('📁 Dados exportados com sucesso para a pasta Downloads!');
-        }
-
-        function importData() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        try {
-                            const data = JSON.parse(e.target.result);
-                            
-                            if (data.clients && data.licenses) {
-                                clients = data.clients;
-                                licenses = data.licenses;
-                                nextClientId = data.nextClientId || 1;
-                                nextLicenseId = data.nextLicenseId || 1;
-                                
-                                // Salvar os dados importados
-                                saveData();
-                                
-                                updateDashboard();
-                                updateClientsTable();
-                                updateLicensesTable();
-                                updateClientSelect();
-                                
-                                alert('📥 Dados importados com sucesso!');
-                            } else {
-                                alert('❌ Arquivo inválido. Certifique-se de que é um backup válido.');
-                            }
-                        } catch (error) {
-                            alert('❌ Erro ao ler o arquivo. Verifique se é um arquivo JSON válido.');
-                            console.error('Erro na importação:', error);
-                        }
-                    };
-                    reader.readAsText(file);
-                }
-            };
-            input.click();
-        }
-
-        function clearAllData() {
-            if (confirm('⚠️ ATENÇÃO: Isso irá apagar TODOS os dados salvos. Tem certeza?\n\n💡 Recomendamos fazer um backup antes (botão Exportar Dados).')) {
-                if (confirm('🔴 ÚLTIMA CONFIRMAÇÃO: Todos os clientes e licenças serão perdidos. Continuar?')) {
-                    // Limpar dados do sistema
-                    clients = [];
-                    licenses = [];
-                    nextClientId = 1;
-                    nextLicenseId = 1;
-                    
-                    // Limpar localStorage
-                    try {
-                        if (typeof(Storage) !== "undefined") {
-                            localStorage.removeItem('licenseControlData');
-                        }
-                    } catch (e) {
-                        console.log('localStorage não disponível para limpeza');
-                    }
-                    
-                    // Limpar cookies
-                    try {
-                        const cookies = document.cookie.split(';');
-                        const chunksCookie = cookies.find(cookie => cookie.trim().startsWith('licenseChunks='));
-                        
-                        if (chunksCookie) {
-                            const numChunks = parseInt(chunksCookie.split('=')[1]);
-                            for (let i = 0; i < numChunks; i++) {
-                                document.cookie = `licenseData_${i}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-                            }
-                        }
-                        document.cookie = 'licenseChunks=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-                    } catch (e) {
-                        console.log('Erro ao limpar cookies');
-                    }
-                    
-                    // Atualizar interface
-                    updateDashboard();
-                    updateClientsTable();
-                    updateLicensesTable();
-                    updateClientSelect();
-                    
-                    alert('🗑️ Todos os dados foram apagados com sucesso!');
-                }
+                syncInfo.className = 'alert alert-info';
+                syncInfo.innerHTML = '<strong>ℹ️ Configure as credenciais acima para ativar a sincronização automática.</strong>';
             }
         }
 
-        // Função para testar se o salvamento está funcionando
-        function testSave() {
-            const testData = { test: 'Teste de salvamento', timestamp: new Date().toISOString() };
-            
-            console.log('🧪 Testando métodos de salvamento...');
-            
-            // Teste localStorage
+        // Funções do Google Sheets API
+        async function loadDataFromSheets() {
+            if (!isConnected) return;
+
             try {
-                localStorage.setItem('testSave', JSON.stringify(testData));
-                const retrieved = localStorage.getItem('testSave');
-                if (retrieved && JSON.parse(retrieved).test === testData.test) {
-                    console.log('✅ localStorage: Funcionando');
-                    localStorage.removeItem('testSave');
-                } else {
-                    console.log('❌ localStorage: Falhou no teste');
-                }
-            } catch (e) {
-                console.log('❌ localStorage: Não disponível -', e.message);
-            }
-            
-            // Teste cookies
-            try {
-                document.cookie = `testCookie=${encodeURIComponent(JSON.stringify(testData))}; path=/`;
-                const cookies = document.cookie.split(';');
-                const testCookie = cookies.find(cookie => cookie.trim().startsWith('testCookie='));
-                if (testCookie) {
-                    console.log('✅ Cookies: Funcionando');
-                    document.cookie = 'testCookie=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-                } else {
-                    console.log('❌ Cookies: Falhou no teste');
-                }
-            } catch (e) {
-                console.log('❌ Cookies: Erro -', e.message);
-            }
-            
-            alert('🧪 Teste de salvamento concluído! Verifique o console do navegador (F12) para detalhes.');
-        }
-
-        // Gerenciamento de abas
-        function showTab(tabName) {
-            // Esconder todas as abas
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Mostrar aba selecionada
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-
-            // Atualizar dados se necessário
-            if (tabName === 'dashboard') {
-                updateDashboard();
-            } else if (tabName === 'backup') {
-                updateBackupStats();
-            }
-        }
-
-        // Funções para clientes
-        function addClient() {
-            const name = document.getElementById('clientName').value.trim();
-            const email = document.getElementById('clientEmail').value.trim();
-            const phone = document.getElementById('clientPhone').value.trim();
-
-            if (!name) {
-                alert('Por favor, informe o nome do cliente.');
-                return;
-            }
-
-            const client = {
-                id: nextClientId++,
-                name: name,
-                email: email,
-                phone: phone,
-                createdAt: new Date().toLocaleDateString('pt-BR')
-            };
-
-            clients.push(client);
-            saveData(); // Salvar dados automaticamente
-            
-            // Limpar formulário
-            document.getElementById('clientName').value = '';
-            document.getElementById('clientEmail').value = '';
-            document.getElementById('clientPhone').value = '';
-
-            updateClientsTable();
-            updateClientSelect();
-            updateDashboard();
-
-            alert('Cliente adicionado com sucesso!');
-        }
-
-        function deleteClient(clientId) {
-            if (confirm('Tem certeza que deseja excluir este cliente? Todas as licenças associadas também serão excluídas.')) {
-                clients = clients.filter(c => c.id !== clientId);
-                licenses = licenses.filter(l => l.clientId !== clientId);
-                saveData(); // Salvar dados automaticamente
+                // Carregar clientes
+                const clientsResponse = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/Clientes?key=${config.apiKey}`
+                );
                 
+                if (clientsResponse.ok) {
+                    const clientsData = await clientsResponse.json();
+                    if (clientsData.values && clientsData.values.length > 1) {
+                        clients = clientsData.values.slice(1).map(row => ({
+                            id: parseInt(row[0]) || 0,
+                            name: row[1] || '',
+                            email: row[2] || '',
+                            phone: row[3] || '',
+                            createdAt: row[4] || ''
+                        }));
+                        nextClientId = Math.max(...clients.map(c => c.id), 0) + 1;
+                    }
+                }
+
+                // Carregar licenças
+                const licensesResponse = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/Licencas?key=${config.apiKey}`
+                );
+                
+                if (licensesResponse.ok) {
+                    const licensesData = await licensesResponse.json();
+                    if (licensesData.values && licensesData.values.length > 1) {
+                        licenses = licensesData.values.slice(1).map(row => ({
+                            id: parseInt(row[0]) || 0,
+                            clientId: parseInt(row[1]) || 0,
+                            software: row[2] || '',
+                            version: row[3] || '',
+                            startDate: row[4] || '',
+                            endDate: row[5] || '',
+                            key: row[6] || '',
+                            createdAt: row[7] || ''
+                        }));
+                        nextLicenseId = Math.max(...licenses.map(l => l.id), 0) + 1;
+                    }
+                }
+
+                updateDashboard();
                 updateClientsTable();
                 updateLicensesTable();
                 updateClientSelect();
-                updateDashboard();
-            }
-        }
-
-        function updateClientsTable() {
-            const tbody = document.getElementById('clientsTable');
-            tbody.innerHTML = '';
-
-            clients.forEach(client => {
-                const clientLicenses = licenses.filter(l => l.clientId === client.id);
-                const row = tbody.insertRow();
+                updateSyncStats();
                 
-                row.innerHTML = `
-                    <td>${client.name}</td>
-                    <td>${client.email || '-'}</td>
-                    <td>${client.phone || '-'}</td>
-                    <td>${clientLicenses.length}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-danger" onclick="deleteClient(${client.id})">Excluir</button>
-                        </div>
-                    </td>
-                `;
-            });
-        }
-
-        // Funções para licenças
-        function addLicense() {
-            const clientId = parseInt(document.getElementById('licenseClient').value);
-            const software = document.getElementById('licenseSoftware').value;
-            const version = document.getElementById('licenseVersion').value.trim();
-            const startDate = document.getElementById('licenseStartDate').value;
-            const endDate = document.getElementById('licenseEndDate').value;
-            const key = document.getElementById('licenseKey').value.trim();
-
-            if (!clientId || !software || !endDate) {
-                alert('Por favor, preencha os campos obrigatórios: Cliente, Software e Data de Validade.');
-                return;
-            }
-
-            if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
-                alert('A data de início deve ser anterior à data de validade.');
-                return;
-            }
-
-            const license = {
-                id: nextLicenseId++,
-                clientId: clientId,
-                software: software,
-                version: version || '-',
-                startDate: startDate || '-',
-                endDate: endDate,
-                key: key || '-',
-                createdAt: new Date().toLocaleDateString('pt-BR')
-            };
-
-            licenses.push(license);
-            saveData(); // Salvar dados automaticamente
-
-            // Limpar formulário
-            document.getElementById('licenseClient').value = '';
-            document.getElementById('licenseSoftware').value = '';
-            document.getElementById('licenseVersion').value = '';
-            document.getElementById('licenseStartDate').value = '';
-            document.getElementById('licenseEndDate').value = '';
-            document.getElementById('licenseKey').value = '';
-
-            updateLicensesTable();
-            updateDashboard();
-
-            alert('Licença adicionada com sucesso!');
-        }
-
-        function deleteLicense(licenseId) {
-            if (confirm('Tem certeza que deseja excluir esta licença?')) {
-                licenses = licenses.filter(l => l.id !== licenseId);
-                saveData(); // Salvar dados automaticamente
-                updateLicensesTable();
-                updateDashboard();
+                console.log('✅ Dados carregados do Google Sheets');
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                showNotification('❌ Erro ao carregar dados do Google Sheets', 'error');
             }
         }
 
-        function renewLicense(licenseId) {
-            const license = licenses.find(l => l.id === licenseId);
-            if (license) {
-                const currentEnd = new Date(license.endDate);
-                const newEnd = new Date(currentEnd);
-                newEnd.setFullYear(newEnd.getFullYear() + 1);
-                
-                license.endDate = newEnd.toISOString().split('T')[0];
-                saveData(); // Salvar dados automaticamente
-                updateLicensesTable();
-                updateDashboard();
-                
-                alert('Licença renovada por mais 1 ano!');
+        async function saveClientToSheets(client) {
+            if (!isConnected) return;
+
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/Clientes:append?valueInputOption=RAW&key=${config.apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            values: [[
+                                client.id,
+                                client.name,
+                                client.email,
+                                client.phone,
+                                client.createdAt
+                            ]]
+                        })
+                    }
+                );
+
+                if (response.ok) {
+                    console.log('✅ Cliente salvo no Google Sheets');
+                    showNotification('✅ Cliente salvo automaticamente!', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
             }
-        }
-
-        function updateLicensesTable() {
-            const tbody = document.getElementById('licensesTable');
-            tbody.innerHTML = '';
-
-            licenses.forEach(license => {
-                const client = clients.find(c => c.id === license.clientId);
-                const status = getLicenseStatus(license.endDate);
-                const row = tbody.insertRow();
-                
-                row.innerHTML = `
-                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
-                    <td>${license.software}</td>
-                    <td>${license.version}</td>
-                    <td>${license.startDate !== '-' ? new Date(license.startDate).toLocaleDateString('pt-BR') : '-'}</td>
-                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
-                    <td><span class="status ${status.class}">${status.text}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-warning" onclick="renewLicense(${license.id})">Renovar</button>
-                            <button class="btn btn-danger" onclick="deleteLicense(${license.id})">Excluir</button>
-                        </div>
-                    </td>
-                `;
-            });
-        }
-
-        // Função para atualizar o select de clientes
-        function updateClientSelect() {
-            const select = document.getElementById('licenseClient');
-            select.innerHTML = '<option value="">Selecione um cliente</option>';
-            
-            clients.forEach(client => {
-                const option = document.createElement('option');
-                option.value = client.id;
-                option.textContent = client.name;
-                select.appendChild(option);
-            });
-        }
-
-        // Função para determinar status da licença
-        function getLicenseStatus(endDate) {
-            const today = new Date();
-            const end = new Date(endDate);
-            const diffTime = end - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays < 0) {
-                return { class: 'expired', text: 'Expirada' };
-            } else if (diffDays <= 30) {
-                return { class: 'expiring', text: 'Expirando' };
-            } else {
-                return { class: 'active', text: 'Ativa' };
-            }
-        }
-
-        // Função para calcular dias restantes
-        function getDaysRemaining(endDate) {
-            const today = new Date();
-            const end = new Date(endDate);
-            const diffTime = end - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
-        }
-
-        // Atualizar dashboard
-        function updateDashboard() {
-            // Atualizar estatísticas
-            document.getElementById('totalClients').textContent = clients.length;
-            document.getElementById('totalLicenses').textContent = licenses.length;
-            
-            const activeLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'active').length;
-            const expiringLicenses = licenses.filter(l => getDaysRemaining(l.endDate) <= 30 && getDaysRemaining(l.endDate) > 0).length;
-            
-            document.getElementById('activeLicenses').textContent = activeLicenses;
-            document.getElementById('expiringLicenses').textContent = expiringLicenses;
-
-            // Atualizar alertas
-            const alertsDiv = document.getElementById('dashboardAlerts');
-            alertsDiv.innerHTML = '';
-
-            const expiredLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'expired').length;
-            
-            if (expiredLicenses > 0) {
-                alertsDiv.innerHTML += `<div class="alert alert-warning">⚠️ Atenção: ${expiredLicenses} licença(s) expirada(s)</div>`;
-            }
-            
-            if (expiringLicenses > 0) {
-                alertsDiv.innerHTML += `<div class="alert alert-warning">🔔 Alerta: ${expiringLicenses} licença(s) expirando em 30 dias</div>`;
-            }
-
-            if (licenses.length === 0) {
-                alertsDiv.innerHTML += `<div class="alert alert-success">✨ Nenhuma licença cadastrada ainda. Comece adicionando seus clientes e licenças!</div>`;
-            }
-
-            // Atualizar tabela do dashboard
-            updateDashboardTable();
-        }
-
-        function updateDashboardTable() {
-            const tbody = document.getElementById('dashboardTable');
-            tbody.innerHTML = '';
-
-            // Ordenar por data de validade (mais próximas primeiro)
-            const sortedLicenses = [...licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-
-            sortedLicenses.forEach(license => {
-                const client = clients.find(c => c.id === license.clientId);
-                const status = getLicenseStatus(license.endDate);
-                const daysRemaining = getDaysRemaining(license.endDate);
-                const row = tbody.insertRow();
-                
-                row.innerHTML = `
-                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
-                    <td>${license.software}</td>
-                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
-                    <td><span class="status ${status.class}">${status.text}</span></td>
-                    <td>${daysRemaining < 0 ? 'Expirada' : daysRemaining + ' dias'}</td>
-                `;
-            });
-        }
-
-        // Definir data padrão para hoje
-        document.getElementById('licenseStartDate').valueAsDate = new Date();
-
-        // Atualizar estatísticas da aba backup
-        function updateBackupStats() {
-            document.getElementById('backupTotalClients').textContent = clients.length;
-            document.getElementById('backupTotalLicenses').textContent = licenses.length;
-            
-            const bitdefenderCount = licenses.filter(l => l.software === 'BitDefender').length;
-            const kaseyaCount = licenses.filter(l => l.software === 'Kaseya').length;
-            const acronisCount = licenses.filter(l => l.software === 'Acronis').length;
-            
-            document.getElementById('backupBitdefender').textContent = bitdefenderCount;
-            document.getElementById('backupKaseya').textContent = kaseyaCount;
-            document.getElementById('backupAcronis').textContent = acronisCount;
-        }
-    </script>
-</body>
-</html>
