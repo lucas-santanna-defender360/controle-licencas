@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Licenças</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 8px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 25px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #6c757d;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+
+        .section h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-control label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control input,
+        .form-control select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control input:focus,
+        .form-control select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(254, 202, 87, 0.3);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            font-weight: 700;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.expiring {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card p {
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-group {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Sistema de Controle de Licenças</h1>
+            <p>Gerencie suas licenças de software de forma simples e eficiente</p>
+        <!-- Backup Tab -->
+        <div id="backup" class="tab-content">
+            <div class="section">
+                <h3>💾 Gerenciamento de Dados</h3>
+                <p style="margin-bottom: 20px; color: #6c757d; line-height: 1.6;">
+                    Use estas opções para fazer backup e restaurar seus dados. Os dados são salvos automaticamente 
+                    a cada modificação, mas você pode fazer backups manuais e importar dados de outros arquivos.
+                </p>
+                
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="exportData()">📤 Exportar Dados</button>
+                    <button class="btn btn-primary" onclick="importData()">📥 Importar Dados</button>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #667eea;">
+                    <h4 style="margin-bottom: 15px; color: #495057;">ℹ️ Como usar o sistema de backup:</h4>
+                    <ul style="color: #6c757d; line-height: 1.8;">
+                        <li><strong>Backup Automático:</strong> A cada alteração (adicionar/excluir), um arquivo é baixado automaticamente</li>
+                        <li><strong>Exportar Dados:</strong> Baixa um backup completo manual com timestamp</li>
+                        <li><strong>Importar Dados:</strong> Carrega dados de um arquivo de backup anterior</li>
+                        <li><strong>Formato:</strong> Os dados são salvos em formato JSON para compatibilidade</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 10px; border-left: 4px solid #ffc107;">
+                    <p style="margin: 0; color: #856404;">
+                        <strong>💡 Dica:</strong> Mantenha backups regulares em local seguro. 
+                        Os arquivos são pequenos e podem ser armazenados em nuvem ou pen drive.
+                    </p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📊 Estatísticas do Sistema</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4 id="backupTotalClients">0</h4>
+                        <p>Clientes Cadastrados</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="backupTotalLicenses">0</h4>
+                        <p>Licenças Gerenciadas</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="backupBitdefender">0</h4>
+                        <p>BitDefender</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="backupKaseya">0</h4>
+                        <p>Kaseya</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="backupAcronis">0</h4>
+                        <p>Acronis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-button" onclick="showTab('clients')">👥 Clientes</button>
+            <button class="tab-button" onclick="showTab('licenses')">🔑 Licenças</button>
+            <button class="tab-button" onclick="showTab('backup')">💾 Backup</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4 id="totalClients">0</h4>
+                    <p>Total de Clientes</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="totalLicenses">0</h4>
+                    <p>Total de Licenças</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="activeLicenses">0</h4>
+                    <p>Licenças Ativas</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="expiringLicenses">0</h4>
+                    <p>Expirando em 30 dias</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📈 Visão Geral</h3>
+                <div id="dashboardAlerts"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Software</th>
+                                <th>Validade</th>
+                                <th>Status</th>
+                                <th>Dias Restantes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Tab -->
+        <div id="clients" class="tab-content">
+            <div class="section">
+                <h3>➕ Adicionar Cliente</h3>
+                <div class="form-group">
+                    <div class="form-control">
+                        <label>Nome do Cliente</label>
+                        <input type="text" id="clientName" placeholder="Digite o nome do cliente">
+                    </div>
+                    <div class="form-control">
+                        <label>Email</label>
+                        <input type="email" id="clientEmail" placeholder="cliente@email.com">
+                    </div>
+                    <div class="form-control">
+                        <label>Telefone</label>
+                        <input type="text" id="clientPhone" placeholder="(11) 99999-9999">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addClient()">Adicionar Cliente</button>
+            </div>
+
+            <div class="section">
+                <h3>👥 Lista de Clientes</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Licenças</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Licenses Tab -->
+        <div id="licenses" class="tab-content">
+            <div class="section">
+                <h3>🔑 Adicionar Licença</h3>
+                <div class="form-group">
+                    <div class="form-control">
+                        <label>Cliente</label>
+                        <select id="licenseClient">
+                            <option value="">Selecione um cliente</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label>Software</label>
+                        <select id="licenseSoftware">
+                            <option value="">Selecione o software</option>
+                            <option value="BitDefender">BitDefender (Antivírus)</option>
+                            <option value="Kaseya">Kaseya (Defender 360 - RMM)</option>
+                            <option value="Acronis">Acronis (Backup)</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label>Versão</label>
+                        <input type="text" id="licenseVersion" placeholder="v1.0.0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-control">
+                        <label>Data de Início</label>
+                        <input type="date" id="licenseStartDate">
+                    </div>
+                    <div class="form-control">
+                        <label>Data de Validade</label>
+                        <input type="date" id="licenseEndDate">
+                    </div>
+                    <div class="form-control">
+                        <label>Chave da Licença</label>
+                        <input type="text" id="licenseKey" placeholder="XXXXX-XXXXX-XXXXX-XXXXX">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addLicense()">Adicionar Licença</button>
+            </div>
+
+            <div class="section">
+                <h3>📋 Lista de Licenças</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Software</th>
+                                <th>Versão</th>
+                                <th>Início</th>
+                                <th>Validade</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licensesTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados armazenados em memória
+        let clients = [];
+        let licenses = [];
+        let nextClientId = 1;
+        let nextLicenseId = 1;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData(); // Carregar dados salvos
+            updateDashboard();
+            updateClientsTable();
+            updateLicensesTable();
+            updateClientSelect();
+        });
+
+        // Funções de persistência de dados usando múltiplos métodos
+        function saveData() {
+            const data = {
+                clients: clients,
+                licenses: licenses,
+                nextClientId: nextClientId,
+                nextLicenseId: nextLicenseId,
+                lastSaved: new Date().toISOString()
+            };
+            
+            try {
+                const jsonData = JSON.stringify(data);
+                let savedSuccessfully = false;
+                
+                // Método 1: Tentar localStorage primeiro
+                try {
+                    if (typeof(Storage) !== "undefined") {
+                        localStorage.setItem('licenseControlData', jsonData);
+                        savedSuccessfully = true;
+                        console.log('✅ Dados salvos via localStorage');
+                    }
+                } catch (e) {
+                    console.log('⚠️ localStorage não disponível, tentando cookies...');
+                }
+                
+                // Método 2: Fallback para cookies se localStorage falhar
+                if (!savedSuccessfully) {
+                    try {
+                        // Dividir dados em chunks menores para evitar limite de cookies
+                        const chunks = chunkString(jsonData, 3000);
+                        document.cookie = `licenseChunks=${chunks.length}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+                        
+                        chunks.forEach((chunk, index) => {
+                            document.cookie = `licenseData_${index}=${encodeURIComponent(chunk)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+                        });
+                        
+                        savedSuccessfully = true;
+                        console.log('✅ Dados salvos via cookies');
+                    } catch (e) {
+                        console.error('❌ Erro ao salvar via cookies:', e);
+                    }
+                }
+                
+                // Método 3: Backup automático em arquivo se outros métodos falharem
+                if (!savedSuccessfully) {
+                    console.log('⚠️ Salvamento automático falhou, criando backup em arquivo...');
+                    downloadBackup(data);
+                }
+                
+                // Mostrar indicador visual de salvamento
+                showSaveIndicator(savedSuccessfully);
+                
+            } catch (error) {
+                console.error('❌ Erro geral ao salvar dados:', error);
+                showSaveIndicator(false);
+            }
+        }
+
+        function loadData() {
+            try {
+                let data = null;
+                
+                // Método 1: Tentar carregar do localStorage primeiro
+                try {
+                    if (typeof(Storage) !== "undefined") {
+                        const savedData = localStorage.getItem('licenseControlData');
+                        if (savedData) {
+                            data = JSON.parse(savedData);
+                            console.log('✅ Dados carregados do localStorage');
+                        }
+                    }
+                } catch (e) {
+                    console.log('⚠️ Erro ao carregar do localStorage, tentando cookies...');
+                }
+                
+                // Método 2: Fallback para cookies se localStorage falhar
+                if (!data) {
+                    try {
+                        const cookies = document.cookie.split(';');
+                        const chunksCookie = cookies.find(cookie => cookie.trim().startsWith('licenseChunks='));
+                        
+                        if (chunksCookie) {
+                            const numChunks = parseInt(chunksCookie.split('=')[1]);
+                            let combinedData = '';
+                            
+                            for (let i = 0; i < numChunks; i++) {
+                                const chunkCookie = cookies.find(cookie => cookie.trim().startsWith(`licenseData_${i}=`));
+                                if (chunkCookie) {
+                                    combinedData += decodeURIComponent(chunkCookie.split('=')[1]);
+                                }
+                            }
+                            
+                            if (combinedData) {
+                                data = JSON.parse(combinedData);
+                                console.log('✅ Dados carregados dos cookies');
+                            }
+                        }
+                    } catch (e) {
+                        console.log('⚠️ Erro ao carregar dos cookies:', e);
+                    }
+                }
+                
+                // Aplicar dados se encontrados
+                if (data && data.clients && data.licenses) {
+                    clients = data.clients;
+                    licenses = data.licenses;
+                    nextClientId = data.nextClientId || 1;
+                    nextLicenseId = data.nextLicenseId || 1;
+                    
+                    console.log(`📊 Carregados: ${clients.length} clientes, ${licenses.length} licenças`);
+                    return true;
+                }
+                
+                console.log('ℹ️ Nenhum dado salvo encontrado. Iniciando com dados vazios.');
+                return false;
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                return false;
+            }
+        }
+
+        // Função auxiliar para dividir strings em chunks
+        function chunkString(str, length) {
+            const chunks = [];
+            for (let i = 0; i < str.length; i += length) {
+                chunks.push(str.slice(i, i + length));
+            }
+            return chunks;
+        }
+
+        // Função para download automático de backup
+        function downloadBackup(data) {
+            try {
+                const jsonData = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `licencias_auto_backup_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                console.log('📁 Backup automático criado');
+            } catch (error) {
+                console.error('❌ Erro ao criar backup automático:', error);
+            }
+        }
+
+        function showSaveIndicator(success = true) {
+            // Criar indicador visual de salvamento
+            let indicator = document.getElementById('saveIndicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'saveIndicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 25px;
+                    font-weight: 600;
+                    font-size: 14px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                    z-index: 1000;
+                    transform: translateX(300px);
+                    transition: all 0.3s ease;
+                `;
+                document.body.appendChild(indicator);
+            }
+            
+            if (success) {
+                indicator.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+                indicator.innerHTML = '✅ Dados salvos automaticamente!';
+            } else {
+                indicator.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+                indicator.innerHTML = '⚠️ Erro ao salvar! Verifique os backups.';
+            }
+            
+            // Mostrar indicador
+            indicator.style.transform = 'translateX(0)';
+            
+            // Esconder após 4 segundos
+            setTimeout(() => {
+                indicator.style.transform = 'translateX(300px)';
+            }, 4000);
+        }
+
+        function exportData() {
+            const data = {
+                clients: clients,
+                licenses: licenses,
+                nextClientId: nextClientId,
+                nextLicenseId: nextLicenseId,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const jsonData = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `licencias_completo_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('📁 Dados exportados com sucesso para a pasta Downloads!');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            
+                            if (data.clients && data.licenses) {
+                                clients = data.clients;
+                                licenses = data.licenses;
+                                nextClientId = data.nextClientId || 1;
+                                nextLicenseId = data.nextLicenseId || 1;
+                                
+                                // Salvar os dados importados
+                                saveData();
+                                
+                                updateDashboard();
+                                updateClientsTable();
+                                updateLicensesTable();
+                                updateClientSelect();
+                                
+                                alert('📥 Dados importados com sucesso!');
+                            } else {
+                                alert('❌ Arquivo inválido. Certifique-se de que é um backup válido.');
+                            }
+                        } catch (error) {
+                            alert('❌ Erro ao ler o arquivo. Verifique se é um arquivo JSON válido.');
+                            console.error('Erro na importação:', error);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ ATENÇÃO: Isso irá apagar TODOS os dados salvos. Tem certeza?\n\n💡 Recomendamos fazer um backup antes (botão Exportar Dados).')) {
+                if (confirm('🔴 ÚLTIMA CONFIRMAÇÃO: Todos os clientes e licenças serão perdidos. Continuar?')) {
+                    // Limpar dados do sistema
+                    clients = [];
+                    licenses = [];
+                    nextClientId = 1;
+                    nextLicenseId = 1;
+                    
+                    // Limpar localStorage
+                    try {
+                        if (typeof(Storage) !== "undefined") {
+                            localStorage.removeItem('licenseControlData');
+                        }
+                    } catch (e) {
+                        console.log('localStorage não disponível para limpeza');
+                    }
+                    
+                    // Limpar cookies
+                    try {
+                        const cookies = document.cookie.split(';');
+                        const chunksCookie = cookies.find(cookie => cookie.trim().startsWith('licenseChunks='));
+                        
+                        if (chunksCookie) {
+                            const numChunks = parseInt(chunksCookie.split('=')[1]);
+                            for (let i = 0; i < numChunks; i++) {
+                                document.cookie = `licenseData_${i}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+                            }
+                        }
+                        document.cookie = 'licenseChunks=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                    } catch (e) {
+                        console.log('Erro ao limpar cookies');
+                    }
+                    
+                    // Atualizar interface
+                    updateDashboard();
+                    updateClientsTable();
+                    updateLicensesTable();
+                    updateClientSelect();
+                    
+                    alert('🗑️ Todos os dados foram apagados com sucesso!');
+                }
+            }
+        }
+
+        // Função para testar se o salvamento está funcionando
+        function testSave() {
+            const testData = { test: 'Teste de salvamento', timestamp: new Date().toISOString() };
+            
+            console.log('🧪 Testando métodos de salvamento...');
+            
+            // Teste localStorage
+            try {
+                localStorage.setItem('testSave', JSON.stringify(testData));
+                const retrieved = localStorage.getItem('testSave');
+                if (retrieved && JSON.parse(retrieved).test === testData.test) {
+                    console.log('✅ localStorage: Funcionando');
+                    localStorage.removeItem('testSave');
+                } else {
+                    console.log('❌ localStorage: Falhou no teste');
+                }
+            } catch (e) {
+                console.log('❌ localStorage: Não disponível -', e.message);
+            }
+            
+            // Teste cookies
+            try {
+                document.cookie = `testCookie=${encodeURIComponent(JSON.stringify(testData))}; path=/`;
+                const cookies = document.cookie.split(';');
+                const testCookie = cookies.find(cookie => cookie.trim().startsWith('testCookie='));
+                if (testCookie) {
+                    console.log('✅ Cookies: Funcionando');
+                    document.cookie = 'testCookie=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                } else {
+                    console.log('❌ Cookies: Falhou no teste');
+                }
+            } catch (e) {
+                console.log('❌ Cookies: Erro -', e.message);
+            }
+            
+            alert('🧪 Teste de salvamento concluído! Verifique o console do navegador (F12) para detalhes.');
+        }
+
+        // Gerenciamento de abas
+        function showTab(tabName) {
+            // Esconder todas as abas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar aba selecionada
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Atualizar dados se necessário
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'backup') {
+                updateBackupStats();
+            }
+        }
+
+        // Funções para clientes
+        function addClient() {
+            const name = document.getElementById('clientName').value.trim();
+            const email = document.getElementById('clientEmail').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+
+            if (!name) {
+                alert('Por favor, informe o nome do cliente.');
+                return;
+            }
+
+            const client = {
+                id: nextClientId++,
+                name: name,
+                email: email,
+                phone: phone,
+                createdAt: new Date().toLocaleDateString('pt-BR')
+            };
+
+            clients.push(client);
+            saveData(); // Salvar dados automaticamente
+            
+            // Limpar formulário
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientEmail').value = '';
+            document.getElementById('clientPhone').value = '';
+
+            updateClientsTable();
+            updateClientSelect();
+            updateDashboard();
+
+            alert('Cliente adicionado com sucesso!');
+        }
+
+        function deleteClient(clientId) {
+            if (confirm('Tem certeza que deseja excluir este cliente? Todas as licenças associadas também serão excluídas.')) {
+                clients = clients.filter(c => c.id !== clientId);
+                licenses = licenses.filter(l => l.clientId !== clientId);
+                saveData(); // Salvar dados automaticamente
+                
+                updateClientsTable();
+                updateLicensesTable();
+                updateClientSelect();
+                updateDashboard();
+            }
+        }
+
+        function updateClientsTable() {
+            const tbody = document.getElementById('clientsTable');
+            tbody.innerHTML = '';
+
+            clients.forEach(client => {
+                const clientLicenses = licenses.filter(l => l.clientId === client.id);
+                const row = tbody.insertRow();
+                
+                row.innerHTML = `
+                    <td>${client.name}</td>
+                    <td>${client.email || '-'}</td>
+                    <td>${client.phone || '-'}</td>
+                    <td>${clientLicenses.length}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-danger" onclick="deleteClient(${client.id})">Excluir</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // Funções para licenças
+        function addLicense() {
+            const clientId = parseInt(document.getElementById('licenseClient').value);
+            const software = document.getElementById('licenseSoftware').value;
+            const version = document.getElementById('licenseVersion').value.trim();
+            const startDate = document.getElementById('licenseStartDate').value;
+            const endDate = document.getElementById('licenseEndDate').value;
+            const key = document.getElementById('licenseKey').value.trim();
+
+            if (!clientId || !software || !endDate) {
+                alert('Por favor, preencha os campos obrigatórios: Cliente, Software e Data de Validade.');
+                return;
+            }
+
+            if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+                alert('A data de início deve ser anterior à data de validade.');
+                return;
+            }
+
+            const license = {
+                id: nextLicenseId++,
+                clientId: clientId,
+                software: software,
+                version: version || '-',
+                startDate: startDate || '-',
+                endDate: endDate,
+                key: key || '-',
+                createdAt: new Date().toLocaleDateString('pt-BR')
+            };
+
+            licenses.push(license);
+            saveData(); // Salvar dados automaticamente
+
+            // Limpar formulário
+            document.getElementById('licenseClient').value = '';
+            document.getElementById('licenseSoftware').value = '';
+            document.getElementById('licenseVersion').value = '';
+            document.getElementById('licenseStartDate').value = '';
+            document.getElementById('licenseEndDate').value = '';
+            document.getElementById('licenseKey').value = '';
+
+            updateLicensesTable();
+            updateDashboard();
+
+            alert('Licença adicionada com sucesso!');
+        }
+
+        function deleteLicense(licenseId) {
+            if (confirm('Tem certeza que deseja excluir esta licença?')) {
+                licenses = licenses.filter(l => l.id !== licenseId);
+                saveData(); // Salvar dados automaticamente
+                updateLicensesTable();
+                updateDashboard();
+            }
+        }
+
+        function renewLicense(licenseId) {
+            const license = licenses.find(l => l.id === licenseId);
+            if (license) {
+                const currentEnd = new Date(license.endDate);
+                const newEnd = new Date(currentEnd);
+                newEnd.setFullYear(newEnd.getFullYear() + 1);
+                
+                license.endDate = newEnd.toISOString().split('T')[0];
+                saveData(); // Salvar dados automaticamente
+                updateLicensesTable();
+                updateDashboard();
+                
+                alert('Licença renovada por mais 1 ano!');
+            }
+        }
+
+        function updateLicensesTable() {
+            const tbody = document.getElementById('licensesTable');
+            tbody.innerHTML = '';
+
+            licenses.forEach(license => {
+                const client = clients.find(c => c.id === license.clientId);
+                const status = getLicenseStatus(license.endDate);
+                const row = tbody.insertRow();
+                
+                row.innerHTML = `
+                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
+                    <td>${license.software}</td>
+                    <td>${license.version}</td>
+                    <td>${license.startDate !== '-' ? new Date(license.startDate).toLocaleDateString('pt-BR') : '-'}</td>
+                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
+                    <td><span class="status ${status.class}">${status.text}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-warning" onclick="renewLicense(${license.id})">Renovar</button>
+                            <button class="btn btn-danger" onclick="deleteLicense(${license.id})">Excluir</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // Função para atualizar o select de clientes
+        function updateClientSelect() {
+            const select = document.getElementById('licenseClient');
+            select.innerHTML = '<option value="">Selecione um cliente</option>';
+            
+            clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = client.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Função para determinar status da licença
+        function getLicenseStatus(endDate) {
+            const today = new Date();
+            const end = new Date(endDate);
+            const diffTime = end - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) {
+                return { class: 'expired', text: 'Expirada' };
+            } else if (diffDays <= 30) {
+                return { class: 'expiring', text: 'Expirando' };
+            } else {
+                return { class: 'active', text: 'Ativa' };
+            }
+        }
+
+        // Função para calcular dias restantes
+        function getDaysRemaining(endDate) {
+            const today = new Date();
+            const end = new Date(endDate);
+            const diffTime = end - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        // Atualizar dashboard
+        function updateDashboard() {
+            // Atualizar estatísticas
+            document.getElementById('totalClients').textContent = clients.length;
+            document.getElementById('totalLicenses').textContent = licenses.length;
+            
+            const activeLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'active').length;
+            const expiringLicenses = licenses.filter(l => getDaysRemaining(l.endDate) <= 30 && getDaysRemaining(l.endDate) > 0).length;
+            
+            document.getElementById('activeLicenses').textContent = activeLicenses;
+            document.getElementById('expiringLicenses').textContent = expiringLicenses;
+
+            // Atualizar alertas
+            const alertsDiv = document.getElementById('dashboardAlerts');
+            alertsDiv.innerHTML = '';
+
+            const expiredLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'expired').length;
+            
+            if (expiredLicenses > 0) {
+                alertsDiv.innerHTML += `<div class="alert alert-warning">⚠️ Atenção: ${expiredLicenses} licença(s) expirada(s)</div>`;
+            }
+            
+            if (expiringLicenses > 0) {
+                alertsDiv.innerHTML += `<div class="alert alert-warning">🔔 Alerta: ${expiringLicenses} licença(s) expirando em 30 dias</div>`;
+            }
+
+            if (licenses.length === 0) {
+                alertsDiv.innerHTML += `<div class="alert alert-success">✨ Nenhuma licença cadastrada ainda. Comece adicionando seus clientes e licenças!</div>`;
+            }
+
+            // Atualizar tabela do dashboard
+            updateDashboardTable();
+        }
+
+        function updateDashboardTable() {
+            const tbody = document.getElementById('dashboardTable');
+            tbody.innerHTML = '';
+
+            // Ordenar por data de validade (mais próximas primeiro)
+            const sortedLicenses = [...licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+
+            sortedLicenses.forEach(license => {
+                const client = clients.find(c => c.id === license.clientId);
+                const status = getLicenseStatus(license.endDate);
+                const daysRemaining = getDaysRemaining(license.endDate);
+                const row = tbody.insertRow();
+                
+                row.innerHTML = `
+                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
+                    <td>${license.software}</td>
+                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
+                    <td><span class="status ${status.class}">${status.text}</span></td>
+                    <td>${daysRemaining < 0 ? 'Expirada' : daysRemaining + ' dias'}</td>
+                `;
+            });
+        }
+
+        // Definir data padrão para hoje
+        document.getElementById('licenseStartDate').valueAsDate = new Date();
+
+        // Atualizar estatísticas da aba backup
+        function updateBackupStats() {
+            document.getElementById('backupTotalClients').textContent = clients.length;
+            document.getElementById('backupTotalLicenses').textContent = licenses.length;
+            
+            const bitdefenderCount = licenses.filter(l => l.software === 'BitDefender').length;
+            const kaseyaCount = licenses.filter(l => l.software === 'Kaseya').length;
+            const acronisCount = licenses.filter(l => l.software === 'Acronis').length;
+            
+            document.getElementById('backupBitdefender').textContent = bitdefenderCount;
+            document.getElementById('backupKaseya').textContent = kaseyaCount;
+            document.getElementById('backupAcronis').textContent = acronisCount;
+        }
+    </script>
+</body>
+</html>
