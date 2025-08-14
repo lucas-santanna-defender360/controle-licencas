@@ -654,6 +654,10 @@
             if (config.apiKey && config.sheetId) {
                 testConnection();
             }
+            
+            // Definir data padrão para hoje
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('licenseStartDate').value = today;
         });
 
         // Configuração e conexão
@@ -819,4 +823,385 @@
                 } else {
                     throw new Error(`HTTP ${response.status}`);
                 }
+            } catch (error) {
+                console.error('❌ Erro ao salvar cliente:', error);
+                showNotification('❌ Erro ao salvar cliente', 'error');
             }
+        }
+
+        async function saveLicenseToSheets(license) {
+            if (!isConnected) return;
+
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/Licencas:append?valueInputOption=RAW&key=${config.apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            values: [[
+                                license.id,
+                                license.clientId,
+                                license.software,
+                                license.version,
+                                license.startDate,
+                                license.endDate,
+                                license.key,
+                                license.createdAt
+                            ]]
+                        })
+                    }
+                );
+
+                if (response.ok) {
+                    console.log('✅ Licença salva no Google Sheets');
+                    showNotification('✅ Licença salva automaticamente!', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao salvar licença:', error);
+                showNotification('❌ Erro ao salvar licença', 'error');
+            }
+        }
+
+        async function syncData() {
+            if (!isConnected) {
+                showNotification('❌ Não conectado ao Google Sheets', 'error');
+                return;
+            }
+
+            showNotification('🔄 Sincronizando dados...', 'info');
+            await loadDataFromSheets();
+            updateSyncStats();
+            showNotification('✅ Sincronização concluída!', 'success');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+
+            switch (type) {
+                case 'success':
+                    notification.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+                    break;
+                case 'error':
+                    notification.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+                    break;
+                case 'info':
+                    notification.style.background = 'linear-gradient(45deg, #17a2b8, #138496)';
+                    break;
+            }
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        // Gerenciamento de abas
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'sync') {
+                updateSyncStats();
+            }
+        }
+
+        // Funções para clientes
+        async function addClient() {
+            const name = document.getElementById('clientName').value.trim();
+            const email = document.getElementById('clientEmail').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+
+            if (!name) {
+                showNotification('❌ Por favor, informe o nome do cliente.', 'error');
+                return;
+            }
+
+            const client = {
+                id: nextClientId++,
+                name: name,
+                email: email,
+                phone: phone,
+                createdAt: new Date().toLocaleDateString('pt-BR')
+            };
+
+            clients.push(client);
+            
+            // Salvar no Google Sheets
+            await saveClientToSheets(client);
+
+            // Limpar formulário
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientEmail').value = '';
+            document.getElementById('clientPhone').value = '';
+
+            updateClientsTable();
+            updateClientSelect();
+            updateDashboard();
+        }
+
+        async function deleteClient(clientId) {
+            if (confirm('Tem certeza que deseja excluir este cliente? Todas as licenças associadas também serão excluídas.')) {
+                clients = clients.filter(c => c.id !== clientId);
+                licenses = licenses.filter(l => l.clientId !== clientId);
+                
+                updateClientsTable();
+                updateLicensesTable();
+                updateClientSelect();
+                updateDashboard();
+                
+                showNotification('✅ Cliente excluído com sucesso!', 'success');
+            }
+        }
+
+        function updateClientsTable() {
+            const tbody = document.getElementById('clientsTable');
+            tbody.innerHTML = '';
+
+            clients.forEach(client => {
+                const clientLicenses = licenses.filter(l => l.clientId === client.id);
+                const row = tbody.insertRow();
+                
+                row.innerHTML = `
+                    <td>${client.name}</td>
+                    <td>${client.email || '-'}</td>
+                    <td>${client.phone || '-'}</td>
+                    <td>${clientLicenses.length}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-danger" onclick="deleteClient(${client.id})">Excluir</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // Funções para licenças
+        async function addLicense() {
+            const clientId = parseInt(document.getElementById('licenseClient').value);
+            const software = document.getElementById('licenseSoftware').value;
+            const version = document.getElementById('licenseVersion').value.trim();
+            const startDate = document.getElementById('licenseStartDate').value;
+            const endDate = document.getElementById('licenseEndDate').value;
+            const key = document.getElementById('licenseKey').value.trim();
+
+            if (!clientId || !software || !endDate) {
+                showNotification('❌ Preencha os campos obrigatórios: Cliente, Software e Data de Validade.', 'error');
+                return;
+            }
+
+            if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+                showNotification('❌ A data de início deve ser anterior à data de validade.', 'error');
+                return;
+            }
+
+            const license = {
+                id: nextLicenseId++,
+                clientId: clientId,
+                software: software,
+                version: version || '-',
+                startDate: startDate || '-',
+                endDate: endDate,
+                key: key || '-',
+                createdAt: new Date().toLocaleDateString('pt-BR')
+            };
+
+            licenses.push(license);
+            
+            // Salvar no Google Sheets
+            await saveLicenseToSheets(license);
+
+            // Limpar formulário
+            document.getElementById('licenseClient').value = '';
+            document.getElementById('licenseSoftware').value = '';
+            document.getElementById('licenseVersion').value = '';
+            document.getElementById('licenseStartDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('licenseEndDate').value = '';
+            document.getElementById('licenseKey').value = '';
+
+            updateLicensesTable();
+            updateDashboard();
+        }
+
+        async function deleteLicense(licenseId) {
+            if (confirm('Tem certeza que deseja excluir esta licença?')) {
+                licenses = licenses.filter(l => l.id !== licenseId);
+                updateLicensesTable();
+                updateDashboard();
+                showNotification('✅ Licença excluída com sucesso!', 'success');
+            }
+        }
+
+        async function renewLicense(licenseId) {
+            const license = licenses.find(l => l.id === licenseId);
+            if (license) {
+                const currentEnd = new Date(license.endDate);
+                const newEnd = new Date(currentEnd);
+                newEnd.setFullYear(newEnd.getFullYear() + 1);
+                
+                license.endDate = newEnd.toISOString().split('T')[0];
+                
+                updateLicensesTable();
+                updateDashboard();
+                
+                showNotification('✅ Licença renovada por mais 1 ano!', 'success');
+            }
+        }
+
+        function updateLicensesTable() {
+            const tbody = document.getElementById('licensesTable');
+            tbody.innerHTML = '';
+
+            licenses.forEach(license => {
+                const client = clients.find(c => c.id === license.clientId);
+                const status = getLicenseStatus(license.endDate);
+                const row = tbody.insertRow();
+                
+                row.innerHTML = `
+                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
+                    <td>${license.software}</td>
+                    <td>${license.version}</td>
+                    <td>${license.startDate !== '-' ? new Date(license.startDate).toLocaleDateString('pt-BR') : '-'}</td>
+                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
+                    <td><span class="status ${status.class}">${status.text}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-warning" onclick="renewLicense(${license.id})">Renovar</button>
+                            <button class="btn btn-danger" onclick="deleteLicense(${license.id})">Excluir</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function updateClientSelect() {
+            const select = document.getElementById('licenseClient');
+            select.innerHTML = '<option value="">Selecione um cliente</option>';
+            
+            clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = client.name;
+                select.appendChild(option);
+            });
+        }
+
+        function getLicenseStatus(endDate) {
+            const today = new Date();
+            const end = new Date(endDate);
+            const diffTime = end - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) {
+                return { class: 'expired', text: 'Expirada' };
+            } else if (diffDays <= 30) {
+                return { class: 'expiring', text: 'Expirando' };
+            } else {
+                return { class: 'active', text: 'Ativa' };
+            }
+        }
+
+        function getDaysRemaining(endDate) {
+            const today = new Date();
+            const end = new Date(endDate);
+            const diffTime = end - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function updateDashboard() {
+            document.getElementById('totalClients').textContent = clients.length;
+            document.getElementById('totalLicenses').textContent = licenses.length;
+            
+            const activeLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'active').length;
+            const expiringLicenses = licenses.filter(l => getDaysRemaining(l.endDate) <= 30 && getDaysRemaining(l.endDate) > 0).length;
+            
+            document.getElementById('activeLicenses').textContent = activeLicenses;
+            document.getElementById('expiringLicenses').textContent = expiringLicenses;
+
+            const alertsDiv = document.getElementById('dashboardAlerts');
+            alertsDiv.innerHTML = '';
+
+            const expiredLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'expired').length;
+            
+            if (expiredLicenses > 0) {
+                alertsDiv.innerHTML += `<div class="alert alert-warning">⚠️ Atenção: ${expiredLicenses} licença(s) expirada(s)</div>`;
+            }
+            
+            if (expiringLicenses > 0) {
+                alertsDiv.innerHTML += `<div class="alert alert-warning">🔔 Alerta: ${expiringLicenses} licença(s) expirando em 30 dias</div>`;
+            }
+
+            if (licenses.length === 0) {
+                alertsDiv.innerHTML += `<div class="alert alert-success">✨ Nenhuma licença cadastrada ainda. Comece adicionando seus clientes e licenças!</div>`;
+            }
+
+            updateDashboardTable();
+        }
+
+        function updateDashboardTable() {
+            const tbody = document.getElementById('dashboardTable');
+            tbody.innerHTML = '';
+
+            const sortedLicenses = [...licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+
+            sortedLicenses.forEach(license => {
+                const client = clients.find(c => c.id === license.clientId);
+                const status = getLicenseStatus(license.endDate);
+                const daysRemaining = getDaysRemaining(license.endDate);
+                const row = tbody.insertRow();
+                
+                row.innerHTML = `
+                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
+                    <td>${license.software}</td>
+                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
+                    <td><span class="status ${status.class}">${status.text}</span></td>
+                    <td>${daysRemaining < 0 ? 'Expirada' : daysRemaining + ' dias'}</td>
+                `;
+            });
+        }
+
+        function updateSyncStats() {
+            document.getElementById('syncTotalClients').textContent = clients.length;
+            document.getElementById('syncTotalLicenses').textContent = licenses.length;
+            document.getElementById('lastSyncTime').textContent = new Date().toLocaleTimeString('pt-BR');
+        }
+    </script>
+</body>
+</html>
