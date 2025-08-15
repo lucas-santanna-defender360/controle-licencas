@@ -35,6 +35,7 @@
             margin-bottom: 40px;
             padding-bottom: 20px;
             border-bottom: 2px solid #e0e0e0;
+            position: relative;
         }
 
         .header h1 {
@@ -45,29 +46,56 @@
         }
 
         .sync-status {
-            display: inline-flex;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
+            gap: 6px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-top: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .sync-status.connected {
-            background: #d4edda;
             color: #155724;
         }
 
         .sync-status.disconnected {
-            background: #f8d7da;
             color: #721c24;
         }
 
         .sync-status.loading {
-            background: #fff3cd;
             color: #856404;
+        }
+
+        .sync-status .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .sync-status.connected .status-dot {
+            background: #28a745;
+        }
+
+        .sync-status.disconnected .status-dot {
+            background: #dc3545;
+        }
+
+        .sync-status.loading .status-dot {
+            background: #ffc107;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .config-panel {
@@ -406,11 +434,12 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 Sistema de Controle de Licenças</h1>
-            <p>Sincronização automática em tempo real com Firebase</p>
             <div id="syncStatus" class="sync-status disconnected">
-                🔴 Configurando Firebase...
+                <span class="status-dot"></span>
+                <span>Firebase</span>
             </div>
+            <h1>📋 Sistema de Controle de Licenças</h1>
+            <p>Gerencie suas licenças de software com sincronização automática</p>
         </div>
 
         <!-- Painel de Configuração Firebase -->
@@ -687,8 +716,11 @@
 
         function showSyncStatus(status, message) {
             const statusEl = document.getElementById('syncStatus');
+            const dot = statusEl.querySelector('.status-dot');
+            const text = statusEl.querySelector('span:last-child');
+            
             statusEl.className = `sync-status ${status}`;
-            statusEl.textContent = message;
+            text.textContent = 'Firebase';
         }
 
         async function loadDataFromFirebase() {
