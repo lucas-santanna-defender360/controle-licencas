@@ -414,27 +414,18 @@
         </div>
 
         <!-- Painel de Configuração Firebase -->
-        <div id="configPanel" class="config-panel">
+        <div id="configPanel" class="config-panel" style="display: none;">
             <h3>🔥 Configuração do Firebase</h3>
             <div class="config-field">
-                <label>Cole aqui a configuração do Firebase:</label>
-                <textarea id="firebaseConfig" placeholder="Cole aqui o código de configuração do Firebase (const firebaseConfig = { ... })"></textarea>
+                <label>Configuração do Firebase (automática):</label>
+                <textarea id="firebaseConfig" placeholder="Configuração automática carregada..." readonly></textarea>
             </div>
-            <button class="btn btn-success" onclick="initializeFirebase()">🚀 Conectar Firebase</button>
+            <button class="btn btn-success" onclick="initializeFirebase()">🚀 Reconectar Firebase</button>
             
             <div class="alert alert-info" style="margin-top: 15px;">
-                <strong>📋 Sua configuração:</strong><br>
-                <code style="background: #f8f9fa; padding: 5px; border-radius: 5px; font-family: monospace;">
-                const firebaseConfig = {<br>
-                &nbsp;&nbsp;apiKey: "AIzaSyC3Y0l2DQE4wlzn80Lf-M000zztxnuWlwM",<br>
-                &nbsp;&nbsp;authDomain: "controle-de-licencas-16050.firebaseapp.com",<br>
-                &nbsp;&nbsp;projectId: "controle-de-licencas-16050",<br>
-                &nbsp;&nbsp;storageBucket: "controle-de-licencas-16050.firebasestorage.app",<br>
-                &nbsp;&nbsp;messagingSenderId: "1098351492530",<br>
-                &nbsp;&nbsp;appId: "1:1098351492530:web:bc98539c39bf30ead178ab",<br>
-                &nbsp;&nbsp;measurementId: "G-1CWV3NFQP8"<br>
-                };
-                </code>
+                <strong>ℹ️ Configuração Automática Ativa</strong><br>
+                O sistema se conecta automaticamente ao Firebase quando aberto.<br>
+                Use o botão acima apenas se precisar reconectar.
             </div>
         </div>
 
@@ -621,15 +612,34 @@
         });
 
         function loadSavedConfig() {
+            // Configuração automática do Firebase
+            const autoConfig = `const firebaseConfig = {
+  apiKey: "AIzaSyC3Y0l2DQE4wlzn80Lf-M000zztxnuWlwM",
+  authDomain: "controle-de-licencas-16050.firebaseapp.com",
+  projectId: "controle-de-licencas-16050",
+  storageBucket: "controle-de-licencas-16050.firebasestorage.app",
+  messagingSenderId: "1098351492530",
+  appId: "1:1098351492530:web:bc98539c39bf30ead178ab",
+  measurementId: "G-1CWV3NFQP8"
+};`;
+
             try {
                 const savedConfig = localStorage.getItem('firebaseConfig');
                 if (savedConfig) {
                     document.getElementById('firebaseConfig').value = savedConfig;
-                    // Auto-inicializar se tiver configuração salva
-                    setTimeout(() => initializeFirebase(), 1000);
+                } else {
+                    // Se não tem configuração salva, usar a automática
+                    document.getElementById('firebaseConfig').value = autoConfig;
                 }
+                
+                // Auto-inicializar automaticamente
+                setTimeout(() => initializeFirebase(), 500);
+                
             } catch (error) {
-                console.error('Erro ao carregar configuração salva:', error);
+                console.error('Erro ao carregar configuração:', error);
+                // Em caso de erro, usar configuração automática
+                document.getElementById('firebaseConfig').value = autoConfig;
+                setTimeout(() => initializeFirebase(), 1000);
             }
         }
 
