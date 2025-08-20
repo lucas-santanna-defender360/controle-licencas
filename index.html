@@ -12,421 +12,593 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f6fa;
             min-height: 100vh;
-            padding: 20px;
+            color: #2f3542;
+            line-height: 1.5;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 1400px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #e1e8ed;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
+            background: #2f3542;
+            color: #ffffff;
+            padding: 24px 32px;
+            border-bottom: 1px solid #40475a;
             position: relative;
         }
 
-        .header h1 {
-            color: #4a5568;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .sync-status {
+        .firebase-status {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 16px;
+            right: 24px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            gap: 8px;
+            font-size: 11px;
+            color: #a4b0be;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-weight: 500;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .sync-status.connected {
-            color: #155724;
-        }
-
-        .sync-status.disconnected {
-            color: #721c24;
-        }
-
-        .sync-status.loading {
-            color: #856404;
-        }
-
-        .sync-status .status-dot {
+        .status-indicator {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            display: inline-block;
+            background-color: #00d2d3;
         }
 
-        .sync-status.connected .status-dot {
-            background: #28a745;
-        }
-
-        .sync-status.disconnected .status-dot {
-            background: #dc3545;
-        }
-
-        .sync-status.loading .status-dot {
-            background: #ffc107;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .config-panel {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .config-field {
-            margin-bottom: 15px;
-        }
-
-        .config-field label {
-            display: block;
-            margin-bottom: 5px;
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
             font-weight: 600;
-            color: #495057;
+            letter-spacing: -0.025em;
         }
 
-        .config-field textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-family: monospace;
-            resize: vertical;
-            min-height: 120px;
+        .header .subtitle {
+            color: #a4b0be;
+            font-size: 14px;
+            margin-top: 4px;
+            font-weight: 400;
         }
 
-        .config-field textarea:focus {
-            outline: none;
-            border-color: #667eea;
+        .nav {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e8ed;
         }
 
-        .tabs {
+        .nav-tabs {
             display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 8px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .tab-button {
+        .nav-tabs li {
             flex: 1;
-            padding: 15px 25px;
-            background: transparent;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            color: #6c757d;
         }
 
-        .tab-button.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        .nav-tabs button {
+            width: 100%;
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #747d8c;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-family: inherit;
+        }
+
+        .nav-tabs button.active {
+            color: #2f3542;
+            border-bottom-color: #00d2d3;
+            background: #ffffff;
+        }
+
+        .nav-tabs button:hover {
+            color: #2f3542;
+            background: #f8f9fa;
         }
 
         .tab-content {
+            padding: 32px;
+        }
+
+        .tab-pane {
             display: none;
         }
 
-        .tab-content.active {
+        .tab-pane.active {
             display: block;
-        }
-
-        .section {
-            margin-bottom: 30px;
-            padding: 25px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e9ecef;
-        }
-
-        .section h3 {
-            color: #495057;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .form-control label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .form-control input,
-        .form-control select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        .form-control input:focus,
-        .form-control select:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
-        }
-
-        .btn-warning {
-            background: linear-gradient(45deg, #feca57, #ff9ff3);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(254, 202, 87, 0.3);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-            background: white;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        th {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            font-weight: 700;
-            color: #495057;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.9rem;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status.active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status.expired {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .status.expiring {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        .alert-info {
-            background: #cce5ff;
-            color: #004085;
-            border: 1px solid #97d7ff;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
         }
 
         .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
+            background: #ffffff;
+            border: 1px solid #e1e8ed;
+            padding: 24px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
             text-align: center;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #c7d2fe;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        .stat-card h4 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2f3542;
+            display: block;
+            margin-bottom: 4px;
         }
 
-        .stat-card p {
-            color: #6c757d;
-            font-weight: 600;
+        .stat-label {
+            color: #747d8c;
+            font-size: 13px;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 10px;
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
         }
 
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
+        .inventory-card {
+            background: #ffffff;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .inventory-card:hover {
+            border-color: #c7d2fe;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .inventory-title {
+            font-weight: 600;
+            color: #2f3542;
+            font-size: 15px;
+        }
+
+        .inventory-progress {
+            width: 100%;
+            height: 8px;
+            background: #f1f3f4;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .inventory-progress-bar {
+            height: 100%;
+            background: #00d2d3;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .inventory-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #747d8c;
+            font-weight: 500;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #2f3542;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            color: #2f3542;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #00d2d3;
+            box-shadow: 0 0 0 3px rgba(0, 210, 211, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #2f3542;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #40475a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(47, 53, 66, 0.2);
+        }
+
+        .btn-success {
+            background: #00d2d3;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background: #00b8b9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 210, 211, 0.2);
+        }
+
+        .btn-warning {
+            background: #ff9f43;
+            color: #ffffff;
+        }
+
+        .btn-warning:hover {
+            background: #ff8c1a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 159, 67, 0.2);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .table-container {
+            background: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #e1e8ed;
+            margin-bottom: 32px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #f1f3f4;
+            font-size: 14px;
+        }
+
+        .table th {
+            background: #fafbfc;
+            font-weight: 600;
+            color: #2f3542;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-size: 12px;
+        }
+
+        .table tr:hover {
+            background: #fafbfc;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .badge-success {
+            background: #e8f7f0;
+            color: #00875a;
+            border: 1px solid #c7eed8;
+        }
+
+        .badge-warning {
+            background: #fff7e6;
+            color: #b45309;
+            border: 1px solid #fdd179;
+        }
+
+        .badge-danger {
+            background: #ffebe6;
+            color: #c53030;
+            border: 1px solid #feb2a8;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            border: 1px solid;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: #f0f9ff;
+            border-color: #bae6fd;
+            color: #0369a1;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            border-color: #fed7aa;
+            color: #b45309;
+        }
+
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 20px;
+            border-radius: 6px;
+            color: #ffffff;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #00d2d3;
+        }
+
+        .notification.error {
+            background: #ff6b6b;
+        }
+
+        .acronis-config {
+            background: #fafbfc;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .model-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .model-option {
+            padding: 16px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            background: #ffffff;
+        }
+
+        .model-option.active {
+            border-color: #00d2d3;
+            background: #f0fdff;
+        }
+
+        .model-option h4 {
+            margin-bottom: 6px;
+            color: #2f3542;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .model-option p {
+            font-size: 12px;
+            color: #747d8c;
+            margin: 0;
+        }
+
+        h2, h3 {
+            color: #2f3542;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+            letter-spacing: -0.025em;
+        }
+
+        h3 {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .text-danger {
+            color: #ff6b6b !important;
+        }
+
+        .text-success {
+            color: #00d2d3 !important;
+        }
+
+        .text-muted {
+            color: #747d8c !important;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 20px;
-                margin: 10px;
+                margin: 0;
+                border-radius: 0;
+                border: none;
+            }
+
+            .header {
+                padding: 20px 16px;
+            }
+
+            .firebase-status {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 12px;
+                justify-content: center;
             }
 
             .header h1 {
-                font-size: 2rem;
+                font-size: 20px;
+                text-align: center;
             }
 
-            .form-group {
+            .header .subtitle {
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .nav-tabs {
                 flex-direction: column;
             }
 
-            .action-buttons {
-                flex-direction: column;
+            .nav-tabs button {
+                border-bottom: 1px solid #e1e8ed;
+                border-right: none;
             }
 
-            .tabs {
-                flex-direction: column;
+            .nav-tabs button.active {
+                border-bottom-color: #00d2d3;
+            }
+
+            .tab-content {
+                padding: 20px 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .inventory-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .model-selector {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .table {
+                min-width: 600px;
+            }
+
+            .table th,
+            .table td {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+
+            .btn-small {
+                width: auto;
+                margin-bottom: 0;
+                margin-right: 8px;
             }
         }
     </style>
@@ -434,74 +606,71 @@
 <body>
     <div class="container">
         <div class="header">
-            <div id="syncStatus" class="sync-status disconnected">
-                <span class="status-dot"></span>
-                <span>Firebase</span>
+            <div class="firebase-status">
+                <div class="status-indicator"></div>
+                <span>Sistema Ativo</span>
             </div>
-            <h1>📋 Sistema de Controle de Licenças</h1>
-            <p>Gerencie suas licenças de software com sincronização automática</p>
+            <h1>Sistema de Controle de Licenças</h1>
+            <p class="subtitle">Gerenciamento corporativo de licenças e inventário</p>
         </div>
 
-        <!-- Painel de Configuração Firebase -->
-        <div id="configPanel" class="config-panel" style="display: none;">
-            <h3>🔥 Configuração do Firebase</h3>
-            <div class="config-field">
-                <label>Configuração do Firebase (automática):</label>
-                <textarea id="firebaseConfig" placeholder="Configuração automática carregada..." readonly></textarea>
-            </div>
-            <button class="btn btn-success" onclick="initializeFirebase()">🚀 Reconectar Firebase</button>
-            
-            <div class="alert alert-info" style="margin-top: 15px;">
-                <strong>ℹ️ Configuração Automática Ativa</strong><br>
-                O sistema se conecta automaticamente ao Firebase quando aberto.<br>
-                Use o botão acima apenas se precisar reconectar.
-            </div>
-        </div>
+        <nav class="nav">
+            <ul class="nav-tabs">
+                <li><button class="active" onclick="showTab('dashboard')">Dashboard</button></li>
+                <li><button onclick="showTab('inventory')">Inventário</button></li>
+                <li><button onclick="showTab('clients')">Clientes</button></li>
+                <li><button onclick="showTab('licenses')">Licenças</button></li>
+                <li><button onclick="showTab('reports')">Relatórios</button></li>
+            </ul>
+        </nav>
 
-        <div class="tabs">
-            <button class="tab-button active" onclick="showTab('dashboard')">📊 Dashboard</button>
-            <button class="tab-button" onclick="showTab('clients')">👥 Clientes</button>
-            <button class="tab-button" onclick="showTab('licenses')">🔑 Licenças</button>
-            <button class="tab-button" onclick="showTab('reports')">💰 Relatórios</button>
-        </div>
+        <div class="tab-content">
+            <!-- Dashboard -->
+            <div id="dashboard" class="tab-pane active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalClients">0</span>
+                        <div class="stat-label">Total de Clientes</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalLicenses">0</span>
+                        <div class="stat-label">Total de Licenças</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="activeLicenses">0</span>
+                        <div class="stat-label">Licenças Ativas</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="expiringLicenses">0</span>
+                        <div class="stat-label">Expirando (30 dias)</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalMonthlyCost">R$ 0,00</span>
+                        <div class="stat-label">Custo Total Mensal</div>
+                    </div>
+                </div>
 
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4 id="totalClients">0</h4>
-                    <p>Total de Clientes</p>
+                <!-- Inventário Resumo -->
+                <h3>Resumo do Inventário</h3>
+                <div class="inventory-grid" id="inventorySummary">
+                    <!-- Será preenchido dinamicamente -->
                 </div>
-                <div class="stat-card">
-                    <h4 id="totalLicenses">0</h4>
-                    <p>Total de Licenças</p>
-                </div>
-                <div class="stat-card">
-                    <h4 id="activeLicenses">0</h4>
-                    <p>Licenças Ativas</p>
-                </div>
-                <div class="stat-card">
-                    <h4 id="expiringLicenses">0</h4>
-                    <p>Expirando em 30 dias</p>
-                </div>
-                <div class="stat-card">
-                    <h4 id="totalCosts">R$ 0,00</h4>
-                    <p>Custo Total Mensal</p>
-                </div>
-            </div>
 
-            <div class="section">
-                <h3>📈 Visão Geral</h3>
-                <div id="dashboardAlerts"></div>
+                <!-- Alertas -->
+                <div id="alertsContainer"></div>
+
+                <!-- Tabela resumo -->
                 <div class="table-container">
-                    <table>
+                    <h3 style="padding: 20px 20px 0; color: #2f3542;">Licenças por Vencimento</h3>
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Cliente</th>
                                 <th>Software</th>
-                                <th>Validade</th>
+                                <th>Versão</th>
+                                <th>Vencimento</th>
                                 <th>Status</th>
-                                <th>Dias Restantes</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="dashboardTable">
@@ -509,33 +678,64 @@
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Clients Tab -->
-        <div id="clients" class="tab-content">
-            <div class="section">
-                <h3>➕ Adicionar Cliente</h3>
-                <div class="form-group">
-                    <div class="form-control">
-                        <label>Nome do Cliente</label>
-                        <input type="text" id="clientName" placeholder="Digite o nome do cliente">
+            <!-- Inventário -->
+            <div id="inventory" class="tab-pane">
+                <h2>Controle de Inventário de Licenças</h2>
+                
+                <div class="alert alert-info">
+                    <strong>Informação:</strong> Configure aqui a quantidade total de licenças que você possui vs. as que estão sendo utilizadas pelos clientes.
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <h3>BitDefender</h3>
+                        <div class="form-group">
+                            <label>Total de Licenças Compradas:</label>
+                            <input type="number" id="bitdefenderTotal" class="form-control" placeholder="Ex: 100">
+                        </div>
+                        <button class="btn btn-primary" onclick="updateInventory('bitdefender')">Atualizar BitDefender</button>
                     </div>
-                    <div class="form-control">
-                        <label>Email</label>
-                        <input type="email" id="clientEmail" placeholder="cliente@email.com">
-                    </div>
-                    <div class="form-control">
-                        <label>Telefone</label>
-                        <input type="text" id="clientPhone" placeholder="(11) 99999-9999">
+                    <div>
+                        <h3>RMM (Kaseya)</h3>
+                        <div class="form-group">
+                            <label>Total de Licenças Compradas:</label>
+                            <input type="number" id="kaseyaTotal" class="form-control" placeholder="Ex: 50">
+                        </div>
+                        <button class="btn btn-primary" onclick="updateInventory('kaseya')">Atualizar RMM</button>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="addClient()">Adicionar Cliente</button>
+
+                <h3>Status Atual do Inventário</h3>
+                <div class="inventory-grid" id="inventoryDetails">
+                    <!-- Será preenchido dinamicamente -->
+                </div>
             </div>
 
-            <div class="section">
-                <h3>👥 Lista de Clientes</h3>
-                <div class="table-container">
-                    <table>
+            <!-- Clientes -->
+            <div id="clients" class="tab-pane">
+                <h2>Gerenciar Clientes</h2>
+                
+                <div class="form-grid">
+                    <div>
+                        <div class="form-group">
+                            <label>Nome do Cliente:</label>
+                            <input type="text" id="clientName" class="form-control" placeholder="Nome completo">
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="clientEmail" class="form-control" placeholder="email@exemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone:</label>
+                            <input type="tel" id="clientPhone" class="form-control" placeholder="(11) 99999-9999">
+                        </div>
+                        <button class="btn btn-primary" onclick="addClient()">Adicionar Cliente</button>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 30px;">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -550,61 +750,81 @@
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Licenses Tab -->
-        <div id="licenses" class="tab-content">
-            <div class="section">
-                <h3>🔑 Adicionar Licença</h3>
-                <div class="form-group">
-                    <div class="form-control">
-                        <label>Cliente</label>
-                        <select id="licenseClient">
-                            <option value="">Selecione um cliente</option>
-                        </select>
+            <!-- Licenças -->
+            <div id="licenses" class="tab-pane">
+                <h2>Gerenciar Licenças</h2>
+                
+                <div class="form-grid">
+                    <div>
+                        <div class="form-group">
+                            <label>Cliente:</label>
+                            <select id="licenseClient" class="form-control">
+                                <option value="">Selecione um cliente</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Software:</label>
+                            <select id="licenseSoftware" class="form-control" onchange="showAcronisConfig()">
+                                <option value="">Selecione o software</option>
+                                <option value="BitDefender">BitDefender</option>
+                                <option value="Kaseya">Kaseya (RMM)</option>
+                                <option value="Acronis">Acronis (Backup)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Versão:</label>
+                            <input type="text" id="licenseVersion" class="form-control" placeholder="Ex: Enterprise 2024">
+                        </div>
                     </div>
-                    <div class="form-control">
-                        <label>Software</label>
-                        <select id="licenseSoftware">
-                            <option value="">Selecione o software</option>
-                            <option value="BitDefender">BitDefender (Antivírus)</option>
-                            <option value="Kaseya">Kaseya (Defender 360 - RMM)</option>
-                            <option value="Acronis">Acronis (Backup)</option>
-                        </select>
-                    </div>
-                    <div class="form-control">
-                        <label>Versão</label>
-                        <input type="text" id="licenseVersion" placeholder="v1.0.0">
+                    <div>
+                        <div class="form-group">
+                            <label>Data de Início:</label>
+                            <input type="date" id="licenseStartDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Fim:</label>
+                            <input type="date" id="licenseEndDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Chave da Licença:</label>
+                            <input type="text" id="licenseKey" class="form-control" placeholder="Chave ou código da licença">
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-control">
-                        <label>Data de Início</label>
-                        <input type="date" id="licenseStartDate">
+
+                <!-- Configuração específica do Acronis -->
+                <div id="acronisConfig" class="acronis-config" style="display: none;">
+                    <h4 style="margin-bottom: 15px; color: #2f3542;">Configuração Acronis</h4>
+                    <div class="model-selector">
+                        <div class="model-option active" onclick="selectAcronisModel('workload')" id="workloadModel">
+                            <h4>Per-Workload</h4>
+                            <p>Cobrança por dispositivo protegido</p>
+                        </div>
+                        <div class="model-option" onclick="selectAcronisModel('storage')" id="storageModel">
+                            <h4>Per-GB</h4>
+                            <p>Cobrança por armazenamento usado</p>
+                        </div>
                     </div>
-                    <div class="form-control">
-                        <label>Data de Validade</label>
-                        <input type="date" id="licenseEndDate">
-                    </div>
-                    <div class="form-control">
-                        <label>Chave da Licença</label>
-                        <input type="text" id="licenseKey" placeholder="XXXXX-XXXXX-XXXXX-XXXXX">
+                    <div id="acronisFields">
+                        <div class="form-group">
+                            <label>Número de Dispositivos:</label>
+                            <input type="number" id="acronisDevices" class="form-control" placeholder="Quantos dispositivos">
+                        </div>
                     </div>
                 </div>
+
                 <button class="btn btn-primary" onclick="addLicense()">Adicionar Licença</button>
-            </div>
 
-            <div class="section">
-                <h3>📋 Lista de Licenças</h3>
-                <div class="table-container">
-                    <table>
+                <div class="table-container" style="margin-top: 30px;">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Cliente</th>
                                 <th>Software</th>
                                 <th>Versão</th>
                                 <th>Início</th>
-                                <th>Validade</th>
+                                <th>Fim</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
@@ -614,33 +834,57 @@
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Reports Tab -->
-        <div id="reports" class="tab-content">
-            <div class="section">
-                <h3>💰 Configuração de Preços</h3>
-                <div class="form-group">
-                    <div class="form-control">
-                        <label>BitDefender (mensal)</label>
-                        <input type="number" id="priceBitDefender" value="98.64" step="0.01" placeholder="98,64">
-                    </div>
-                    <div class="form-control">
-                        <label>Kaseya (mensal)</label>
-                        <input type="number" id="priceKaseya" value="0.00" step="0.01" placeholder="0,00">
-                    </div>
-                    <div class="form-control">
-                        <label>Acronis (mensal)</label>
-                        <input type="number" id="priceAcronis" value="0.00" step="0.01" placeholder="0,00">
+            <!-- Relatórios -->
+            <div id="reports" class="tab-pane">
+                <h2>Relatórios Financeiros</h2>
+                
+                <!-- Configuração de Preços -->
+                <div class="table-container" style="margin-bottom: 30px;">
+                    <h3 style="padding: 20px 20px 10px; color: #2f3542;">Configuração de Preços</h3>
+                    <div style="padding: 0 20px 20px;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>BitDefender (R$/mês):</label>
+                                <input type="number" step="0.01" id="bitdefenderPrice" class="form-control" value="98.64">
+                            </div>
+                            <div class="form-group">
+                                <label>Kaseya/RMM (R$/mês):</label>
+                                <input type="number" step="0.01" id="kaseyaPrice" class="form-control" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Acronis Per-Workload (R$/mês):</label>
+                                <input type="number" step="0.01" id="acronisWorkloadPrice" class="form-control" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Acronis Per-GB (R$/GB/mês):</label>
+                                <input type="number" step="0.01" id="acronisStoragePrice" class="form-control" value="0">
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="savePrices()">Salvar Preços</button>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="updatePrices()">💾 Salvar Preços</button>
-            </div>
 
-            <div class="section">
-                <h3>📊 Relatório Financeiro por Cliente</h3>
+                <!-- Resumo Financeiro -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="monthlyRevenue">R$ 0,00</span>
+                        <div class="stat-label">Receita Mensal</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="annualRevenue">R$ 0,00</span>
+                        <div class="stat-label">Receita Anual</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="avgPerClient">R$ 0,00</span>
+                        <div class="stat-label">Média por Cliente</div>
+                    </div>
+                </div>
+
+                <!-- Relatório por Cliente -->
                 <div class="table-container">
-                    <table>
+                    <h3 style="padding: 20px 20px 0; color: #2f3542;">Relatório por Cliente</h3>
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Cliente</th>
@@ -656,590 +900,708 @@
                     </table>
                 </div>
             </div>
-
-            <div class="section">
-                <h3>💼 Resumo Financeiro Geral</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4 id="reportTotalMonthly">R$ 0,00</h4>
-                        <p>Receita Mensal Total</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="reportTotalAnnual">R$ 0,00</h4>
-                        <p>Receita Anual Total</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="reportBitDefenderTotal">R$ 0,00</h4>
-                        <p>BitDefender (Mensal)</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="reportKaseyaTotal">R$ 0,00</h4>
-                        <p>Kaseya (Mensal)</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4 id="reportAcronisTotal">R$ 0,00</h4>
-                        <p>Acronis (Mensal)</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
 
     <script>
-        // Variáveis globais
-        let clients = [];
-        let licenses = [];
-        let nextClientId = 1;
-        let nextLicenseId = 1;
-        let db = null;
-        let isFirebaseConnected = false;
-        
-        // Preços das licenças (em reais por mês)
-        let prices = {
-            BitDefender: 98.64,
-            Kaseya: 0.00,
-            Acronis: 0.00
+        // Dados simulados (remover Firebase por enquanto para versão limpa)
+        window.clients = [];
+        window.licenses = [];
+        window.inventory = {
+            bitdefender: { total: 0, used: 0 },
+            kaseya: { total: 0, used: 0 }
+        };
+        window.prices = {
+            bitdefender: 98.64,
+            kaseya: 0,
+            acronisWorkload: 0,
+            acronisStorage: 0
         };
 
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tentar carregar configuração salva
-            loadSavedConfig();
-            
-            updateDashboard();
-            updateClientsTable();
-            updateLicensesTable();
-            updateClientSelect();
-            
-            // Definir data padrão para hoje
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('licenseStartDate').value = today;
-        });
-
-        function loadSavedConfig() {
-            // Configuração automática do Firebase
-            const autoConfig = `const firebaseConfig = {
-  apiKey: "AIzaSyC3Y0l2DQE4wlzn80Lf-M000zztxnuWlwM",
-  authDomain: "controle-de-licencas-16050.firebaseapp.com",
-  projectId: "controle-de-licencas-16050",
-  storageBucket: "controle-de-licencas-16050.firebasestorage.app",
-  messagingSenderId: "1098351492530",
-  appId: "1:1098351492530:web:bc98539c39bf30ead178ab",
-  measurementId: "G-1CWV3NFQP8"
-};`;
-
+        // Carregar dados do localStorage
+        function loadData() {
             try {
-                const savedConfig = localStorage.getItem('firebaseConfig');
-                if (savedConfig) {
-                    document.getElementById('firebaseConfig').value = savedConfig;
-                } else {
-                    // Se não tem configuração salva, usar a automática
-                    document.getElementById('firebaseConfig').value = autoConfig;
+                // Carregar preços
+                const savedPrices = localStorage.getItem('prices');
+                if (savedPrices) {
+                    window.prices = JSON.parse(savedPrices);
+                    updatePriceInputs();
                 }
-                
-                // Auto-inicializar automaticamente
-                setTimeout(() => initializeFirebase(), 500);
-                
-            } catch (error) {
-                console.error('Erro ao carregar configuração:', error);
-                // Em caso de erro, usar configuração automática
-                document.getElementById('firebaseConfig').value = autoConfig;
-                setTimeout(() => initializeFirebase(), 1000);
-            }
-        }
 
-        function initializeFirebase() {
-            const configText = document.getElementById('firebaseConfig').value.trim();
-            
-            if (!configText) {
-                showNotification('❌ Cole a configuração do Firebase primeiro', 'error');
-                return;
-            }
-
-            try {
-                showSyncStatus('loading', '🔄 Conectando ao Firebase...');
-                
-                // Extrair configuração do texto colado
-                const configMatch = configText.match(/firebaseConfig\s*=\s*({[\s\S]*?});/);
-                if (!configMatch) {
-                    throw new Error('Formato de configuração inválido');
+                // Carregar inventário
+                const savedInventory = localStorage.getItem('inventory');
+                if (savedInventory) {
+                    window.inventory = JSON.parse(savedInventory);
+                    updateInventoryInputs();
                 }
-                
-                const configObject = eval('(' + configMatch[1] + ')');
-                
-                // Inicializar Firebase
-                firebase.initializeApp(configObject);
-                db = firebase.firestore();
-                
-                // Salvar configuração
-                localStorage.setItem('firebaseConfig', configText);
-                
-                isFirebaseConnected = true;
-                showSyncStatus('connected', '🟢 Firebase conectado - Sincronização ativa');
-                document.getElementById('configPanel').style.display = 'none';
-                
-                // Carregar dados do Firebase
-                loadDataFromFirebase();
-                
-                showNotification('✅ Firebase conectado com sucesso!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao inicializar Firebase:', error);
-                showSyncStatus('disconnected', '🔴 Erro na configuração do Firebase');
-                showNotification('❌ Erro na configuração do Firebase: ' + error.message, 'error');
-            }
-        }
 
-        function showSyncStatus(status, message) {
-            const statusEl = document.getElementById('syncStatus');
-            const dot = statusEl.querySelector('.status-dot');
-            const text = statusEl.querySelector('span:last-child');
-            
-            statusEl.className = `sync-status ${status}`;
-            text.textContent = 'Firebase';
-        }
-
-        async function loadDataFromFirebase() {
-            if (!isFirebaseConnected) return;
-            
-            try {
                 // Carregar clientes
-                const clientsSnapshot = await db.collection('clients').orderBy('id').get();
-                clients = [];
-                clientsSnapshot.forEach(doc => {
-                    clients.push({ ...doc.data(), firebaseId: doc.id });
-                });
-                
+                const savedClients = localStorage.getItem('clients');
+                if (savedClients) {
+                    window.clients = JSON.parse(savedClients);
+                }
+
                 // Carregar licenças
-                const licensesSnapshot = await db.collection('licenses').orderBy('id').get();
-                licenses = [];
-                licensesSnapshot.forEach(doc => {
-                    licenses.push({ ...doc.data(), firebaseId: doc.id });
-                });
-                
-                // Atualizar próximos IDs
-                if (clients.length > 0) {
-                    nextClientId = Math.max(...clients.map(c => c.id)) + 1;
+                const savedLicenses = localStorage.getItem('licenses');
+                if (savedLicenses) {
+                    window.licenses = JSON.parse(savedLicenses);
                 }
-                if (licenses.length > 0) {
-                    nextLicenseId = Math.max(...licenses.map(l => l.id)) + 1;
-                }
+
+                // Atualizar inventário usado
+                updateInventoryUsed();
                 
-                // Atualizar interface
+                // Atualizar todas as tabelas
                 updateDashboard();
+                updateInventoryDisplay();
                 updateClientsTable();
                 updateLicensesTable();
+                updateReportsTable();
                 updateClientSelect();
                 
-                console.log(`✅ Dados carregados do Firebase: ${clients.length} clientes, ${licenses.length} licenças`);
-                
             } catch (error) {
-                console.error('❌ Erro ao carregar dados do Firebase:', error);
-                showNotification('❌ Erro ao carregar dados do Firebase', 'error');
+                console.error('Erro ao carregar dados:', error);
             }
         }
 
-        async function saveClientToFirebase(client) {
-            if (!isFirebaseConnected) return;
-            
-            try {
-                const docRef = await db.collection('clients').add(client);
-                client.firebaseId = docRef.id;
-                console.log('✅ Cliente salvo no Firebase');
-                showNotification('✅ Cliente salvo automaticamente!', 'success');
-            } catch (error) {
-                console.error('❌ Erro ao salvar cliente:', error);
-                showNotification('❌ Erro ao salvar cliente no Firebase', 'error');
-            }
-        }
-
-        async function saveLicenseToFirebase(license) {
-            if (!isFirebaseConnected) return;
-            
-            try {
-                const docRef = await db.collection('licenses').add(license);
-                license.firebaseId = docRef.id;
-                console.log('✅ Licença salva no Firebase');
-                showNotification('✅ Licença salva automaticamente!', 'success');
-            } catch (error) {
-                console.error('❌ Erro ao salvar licença:', error);
-                showNotification('❌ Erro ao salvar licença no Firebase', 'error');
-            }
-        }
-
-        async function deleteFromFirebase(collection, firebaseId) {
-            if (!isFirebaseConnected || !firebaseId) return;
-            
-            try {
-                await db.collection(collection).doc(firebaseId).delete();
-                console.log('✅ Item excluído do Firebase');
-            } catch (error) {
-                console.error('❌ Erro ao excluir do Firebase:', error);
-            }
-        }
-
-        async function updateInFirebase(collection, firebaseId, data) {
-            if (!isFirebaseConnected || !firebaseId) return;
-            
-            try {
-                await db.collection(collection).doc(firebaseId).update(data);
-                console.log('✅ Item atualizado no Firebase');
-            } catch (error) {
-                console.error('❌ Erro ao atualizar no Firebase:', error);
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 80px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 10px;
-                color: white;
-                font-weight: 600;
-                z-index: 1000;
-                transform: translateX(400px);
-                transition: all 0.3s ease;
-                max-width: 300px;
-                word-wrap: break-word;
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            `;
-
-            switch (type) {
-                case 'success':
-                    notification.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
-                    break;
-                case 'error':
-                    notification.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
-                    break;
-                case 'info':
-                    notification.style.background = 'linear-gradient(45deg, #17a2b8, #138496)';
-                    break;
-            }
-
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-
-            setTimeout(() => {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 4000);
-        }
-
-        // Gerenciamento de abas
+        // Funções de navegação
         function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
+            document.querySelectorAll('.tab-pane').forEach(tab => {
                 tab.classList.remove('active');
             });
-            document.querySelectorAll('.tab-button').forEach(btn => {
+            
+            document.querySelectorAll('.nav-tabs button').forEach(btn => {
                 btn.classList.remove('active');
             });
-
+            
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-
+            
             if (tabName === 'dashboard') {
                 updateDashboard();
+            } else if (tabName === 'inventory') {
+                updateInventoryDisplay();
+            } else if (tabName === 'clients') {
+                updateClientsTable();
+            } else if (tabName === 'licenses') {
+                updateLicensesTable();
+                updateClientSelect();
+            } else if (tabName === 'reports') {
+                updateReportsTable();
             }
         }
 
-        // Funções para clientes
-        async function addClient() {
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function updatePriceInputs() {
+            document.getElementById('bitdefenderPrice').value = window.prices.bitdefender;
+            document.getElementById('kaseyaPrice').value = window.prices.kaseya;
+            document.getElementById('acronisWorkloadPrice').value = window.prices.acronisWorkload;
+            document.getElementById('acronisStoragePrice').value = window.prices.acronisStorage;
+        }
+
+        function updateInventoryInputs() {
+            document.getElementById('bitdefenderTotal').value = window.inventory.bitdefender.total;
+            document.getElementById('kaseyaTotal').value = window.inventory.kaseya.total;
+        }
+
+        function updateInventoryUsed() {
+            window.inventory.bitdefender.used = window.licenses.filter(l => l.software === 'BitDefender' && isLicenseActive(l)).length;
+            window.inventory.kaseya.used = window.licenses.filter(l => l.software === 'Kaseya' && isLicenseActive(l)).length;
+        }
+
+        function isLicenseActive(license) {
+            const today = new Date();
+            const endDate = new Date(license.endDate);
+            return endDate >= today;
+        }
+
+        function getLicenseStatus(license) {
+            const today = new Date();
+            const endDate = new Date(license.endDate);
+            const daysUntilExpiry = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+            
+            if (daysUntilExpiry < 0) {
+                return { status: 'Expirada', class: 'badge-danger' };
+            } else if (daysUntilExpiry <= 30) {
+                return { status: 'Expirando', class: 'badge-warning' };
+            } else {
+                return { status: 'Ativa', class: 'badge-success' };
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        // ===== FUNÇÕES DE INVENTÁRIO =====
+        function updateInventory(type) {
+            const totalInput = document.getElementById(`${type}Total`);
+            const total = parseInt(totalInput.value) || 0;
+            
+            window.inventory[type].total = total;
+            localStorage.setItem('inventory', JSON.stringify(window.inventory));
+            
+            updateInventoryDisplay();
+            updateDashboard();
+            showNotification(`Inventário ${type} atualizado com sucesso!`);
+        }
+
+        function updateInventoryDisplay() {
+            const summaryContainer = document.getElementById('inventorySummary');
+            const detailsContainer = document.getElementById('inventoryDetails');
+            
+            let summaryHTML = '';
+            let detailsHTML = '';
+            
+            ['bitdefender', 'kaseya'].forEach(type => {
+                const data = window.inventory[type];
+                const percentage = data.total > 0 ? (data.used / data.total) * 100 : 0;
+                const available = data.total - data.used;
+                
+                const typeLabel = type === 'bitdefender' ? 'BitDefender' : 'RMM (Kaseya)';
+                
+                summaryHTML += `
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">${typeLabel}</div>
+                            <div>${data.used}/${data.total}</div>
+                        </div>
+                        <div class="inventory-progress">
+                            <div class="inventory-progress-bar" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="inventory-details">
+                            <span>Disponível: ${available}</span>
+                            <span class="${available < 5 ? 'text-danger' : 'text-success'}">
+                                ${available < 5 ? 'Baixo estoque' : 'OK'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                
+                detailsHTML += `
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">${typeLabel}</div>
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #2f3542;">
+                                ${data.used}/${data.total}
+                            </div>
+                        </div>
+                        <div class="inventory-progress">
+                            <div class="inventory-progress-bar" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="inventory-details">
+                            <div>
+                                <strong>Total compradas:</strong> ${data.total}<br>
+                                <strong>Em uso:</strong> ${data.used}<br>
+                                <strong>Disponíveis:</strong> ${available}
+                            </div>
+                            <div style="text-align: right;">
+                                ${available < 5 ? 
+                                    '<span style="color: #ff6b6b;">Estoque baixo</span>' : 
+                                    '<span style="color: #00d2d3;">Estoque OK</span>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            summaryContainer.innerHTML = summaryHTML;
+            detailsContainer.innerHTML = detailsHTML;
+        }
+
+        // ===== FUNÇÕES DE CLIENTES =====
+        function addClient() {
             const name = document.getElementById('clientName').value.trim();
             const email = document.getElementById('clientEmail').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
-
-            if (!name) {
-                showNotification('❌ Por favor, informe o nome do cliente.', 'error');
+            
+            if (!name || !email) {
+                showNotification('Nome e email são obrigatórios!', 'error');
                 return;
             }
-
-            const client = {
-                id: nextClientId++,
-                name: name,
-                email: email,
-                phone: phone,
+            
+            const clientData = {
+                id: Date.now(),
+                name,
+                email,
+                phone,
                 createdAt: new Date().toISOString()
             };
-
-            clients.push(client);
             
-            // Salvar no Firebase
-            await saveClientToFirebase(client);
-
-            // Limpar formulário
+            window.clients.push(clientData);
+            localStorage.setItem('clients', JSON.stringify(window.clients));
+            
             document.getElementById('clientName').value = '';
             document.getElementById('clientEmail').value = '';
             document.getElementById('clientPhone').value = '';
-
+            
             updateClientsTable();
             updateClientSelect();
             updateDashboard();
+            showNotification('Cliente adicionado com sucesso!');
         }
 
-        async function deleteClient(clientId) {
-            if (confirm('Tem certeza que deseja excluir este cliente? Todas as licenças associadas também serão excluídas.')) {
-                const client = clients.find(c => c.id === clientId);
-                const associatedLicenses = licenses.filter(l => l.clientId === clientId);
-                
-                // Excluir do Firebase
-                if (client && client.firebaseId) {
-                    await deleteFromFirebase('clients', client.firebaseId);
-                }
-                
-                for (const license of associatedLicenses) {
-                    if (license.firebaseId) {
-                        await deleteFromFirebase('licenses', license.firebaseId);
-                    }
-                }
-                
-                // Excluir localmente
-                clients = clients.filter(c => c.id !== clientId);
-                licenses = licenses.filter(l => l.clientId !== clientId);
-                
-                updateClientsTable();
-                updateLicensesTable();
-                updateClientSelect();
-                updateDashboard();
-                
-                showNotification('✅ Cliente excluído com sucesso!', 'success');
-            }
+        function removeClient(clientId) {
+            if (!confirm('Tem certeza? Isso também removerá todas as licenças do cliente.')) return;
+            
+            window.clients = window.clients.filter(c => c.id !== clientId);
+            window.licenses = window.licenses.filter(l => l.clientId !== clientId);
+            
+            localStorage.setItem('clients', JSON.stringify(window.clients));
+            localStorage.setItem('licenses', JSON.stringify(window.licenses));
+            
+            updateInventoryUsed();
+            updateClientsTable();
+            updateLicensesTable();
+            updateClientSelect();
+            updateDashboard();
+            updateInventoryDisplay();
+            showNotification('Cliente removido com sucesso!');
         }
 
         function updateClientsTable() {
-            const tbody = document.getElementById('clientsTable');
-            tbody.innerHTML = '';
-
-            clients.forEach(client => {
-                const clientLicenses = licenses.filter(l => l.clientId === client.id);
-                const row = tbody.insertRow();
+            const tableBody = document.getElementById('clientsTable');
+            
+            if (window.clients.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #747d8c;">Nenhum cliente cadastrado</td></tr>';
+                return;
+            }
+            
+            const html = window.clients.map(client => {
+                const clientLicenses = window.licenses.filter(l => l.clientId === client.id);
                 
-                row.innerHTML = `
-                    <td>${client.name}</td>
-                    <td>${client.email || '-'}</td>
-                    <td>${client.phone || '-'}</td>
-                    <td>${clientLicenses.length}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-danger" onclick="deleteClient(${client.id})">Excluir</button>
-                        </div>
-                    </td>
+                return `
+                    <tr>
+                        <td>${client.name}</td>
+                        <td>${client.email}</td>
+                        <td>${client.phone || '-'}</td>
+                        <td>${clientLicenses.length}</td>
+                        <td>
+                            <button class="btn btn-danger btn-small" onclick="removeClient(${client.id})">
+                                Remover
+                            </button>
+                        </td>
+                    </tr>
                 `;
-            });
+            }).join('');
+            
+            tableBody.innerHTML = html;
         }
 
-        // Funções para licenças
-        async function addLicense() {
+        function updateClientSelect() {
+            const select = document.getElementById('licenseClient');
+            
+            let html = '<option value="">Selecione um cliente</option>';
+            html += window.clients.map(client => 
+                `<option value="${client.id}">${client.name}</option>`
+            ).join('');
+            
+            select.innerHTML = html;
+        }
+
+        // ===== FUNÇÕES DE LICENÇAS =====
+        function showAcronisConfig() {
+            const software = document.getElementById('licenseSoftware').value;
+            const config = document.getElementById('acronisConfig');
+            
+            if (software === 'Acronis') {
+                config.style.display = 'block';
+            } else {
+                config.style.display = 'none';
+            }
+        }
+
+        function selectAcronisModel(model) {
+            document.querySelectorAll('.model-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            document.getElementById(model + 'Model').classList.add('active');
+            
+            const fieldsContainer = document.getElementById('acronisFields');
+            
+            if (model === 'workload') {
+                fieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label>Número de Dispositivos:</label>
+                        <input type="number" id="acronisDevices" class="form-control" placeholder="Quantos dispositivos">
+                    </div>
+                `;
+            } else {
+                fieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label>Armazenamento (GB):</label>
+                        <input type="number" id="acronisStorage" class="form-control" placeholder="GB de armazenamento">
+                    </div>
+                `;
+            }
+        }
+
+        function addLicense() {
             const clientId = parseInt(document.getElementById('licenseClient').value);
             const software = document.getElementById('licenseSoftware').value;
             const version = document.getElementById('licenseVersion').value.trim();
             const startDate = document.getElementById('licenseStartDate').value;
             const endDate = document.getElementById('licenseEndDate').value;
             const key = document.getElementById('licenseKey').value.trim();
-
-            if (!clientId || !software || !endDate) {
-                showNotification('❌ Preencha os campos obrigatórios: Cliente, Software e Data de Validade.', 'error');
+            
+            if (!clientId || !software || !version || !startDate || !endDate) {
+                showNotification('Todos os campos são obrigatórios!', 'error');
                 return;
             }
-
-            if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
-                showNotification('❌ A data de início deve ser anterior à data de validade.', 'error');
-                return;
-            }
-
-            const license = {
-                id: nextLicenseId++,
-                clientId: clientId,
-                software: software,
-                version: version || '-',
-                startDate: startDate || '-',
-                endDate: endDate,
-                key: key || '-',
+            
+            const licenseData = {
+                id: Date.now(),
+                clientId,
+                software,
+                version,
+                startDate,
+                endDate,
+                key,
                 createdAt: new Date().toISOString()
             };
-
-            licenses.push(license);
             
-            // Salvar no Firebase
-            await saveLicenseToFirebase(license);
-
-            // Limpar formulário
+            if (software === 'Acronis') {
+                const isWorkloadModel = document.getElementById('workloadModel').classList.contains('active');
+                licenseData.acronisModel = isWorkloadModel ? 'workload' : 'storage';
+                
+                if (isWorkloadModel) {
+                    const devices = document.getElementById('acronisDevices').value;
+                    if (!devices) {
+                        showNotification('Número de dispositivos é obrigatório para modelo Per-Workload!', 'error');
+                        return;
+                    }
+                    licenseData.acronisDevices = parseInt(devices);
+                } else {
+                    const storage = document.getElementById('acronisStorage').value;
+                    if (!storage) {
+                        showNotification('Quantidade de armazenamento é obrigatória para modelo Per-GB!', 'error');
+                        return;
+                    }
+                    licenseData.acronisStorage = parseInt(storage);
+                }
+            }
+            
+            if (software === 'BitDefender') {
+                const available = window.inventory.bitdefender.total - window.inventory.bitdefender.used;
+                if (available <= 0) {
+                    showNotification('Não há licenças BitDefender disponíveis no inventário!', 'error');
+                    return;
+                }
+            } else if (software === 'Kaseya') {
+                const available = window.inventory.kaseya.total - window.inventory.kaseya.used;
+                if (available <= 0) {
+                    showNotification('Não há licenças Kaseya disponíveis no inventário!', 'error');
+                    return;
+                }
+            }
+            
+            window.licenses.push(licenseData);
+            localStorage.setItem('licenses', JSON.stringify(window.licenses));
+            
             document.getElementById('licenseClient').value = '';
             document.getElementById('licenseSoftware').value = '';
             document.getElementById('licenseVersion').value = '';
-            document.getElementById('licenseStartDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('licenseStartDate').value = '';
             document.getElementById('licenseEndDate').value = '';
             document.getElementById('licenseKey').value = '';
-
+            document.getElementById('acronisConfig').style.display = 'none';
+            
+            updateInventoryUsed();
             updateLicensesTable();
             updateDashboard();
+            updateInventoryDisplay();
+            updateReportsTable();
+            showNotification('Licença adicionada com sucesso!');
         }
 
-        async function deleteLicense(licenseId) {
-            if (confirm('Tem certeza que deseja excluir esta licença?')) {
-                const license = licenses.find(l => l.id === licenseId);
-                
-                // Excluir do Firebase
-                if (license && license.firebaseId) {
-                    await deleteFromFirebase('licenses', license.firebaseId);
-                }
-                
-                // Excluir localmente
-                licenses = licenses.filter(l => l.id !== licenseId);
-                
-                updateLicensesTable();
-                updateDashboard();
-                showNotification('✅ Licença excluída com sucesso!', 'success');
-            }
+        function renewLicense(licenseId) {
+            const license = window.licenses.find(l => l.id === licenseId);
+            const endDate = new Date(license.endDate);
+            endDate.setFullYear(endDate.getFullYear() + 1);
+            
+            license.endDate = endDate.toISOString().split('T')[0];
+            localStorage.setItem('licenses', JSON.stringify(window.licenses));
+            
+            updateLicensesTable();
+            updateDashboard();
+            showNotification('Licença renovada por mais 1 ano!');
         }
 
-        async function renewLicense(licenseId) {
-            const license = licenses.find(l => l.id === licenseId);
-            if (license) {
-                const currentEnd = new Date(license.endDate);
-                const newEnd = new Date(currentEnd);
-                newEnd.setFullYear(newEnd.getFullYear() + 1);
-                
-                license.endDate = newEnd.toISOString().split('T')[0];
-                
-                // Atualizar no Firebase
-                if (license.firebaseId) {
-                    await updateInFirebase('licenses', license.firebaseId, { endDate: license.endDate });
-                }
-                
-                updateLicensesTable();
-                updateDashboard();
-                
-                showNotification('✅ Licença renovada por mais 1 ano!', 'success');
-            }
+        function removeLicense(licenseId) {
+            if (!confirm('Tem certeza que deseja remover esta licença?')) return;
+            
+            window.licenses = window.licenses.filter(l => l.id !== licenseId);
+            localStorage.setItem('licenses', JSON.stringify(window.licenses));
+            
+            updateInventoryUsed();
+            updateLicensesTable();
+            updateDashboard();
+            updateInventoryDisplay();
+            updateReportsTable();
+            showNotification('Licença removida com sucesso!');
         }
 
         function updateLicensesTable() {
-            const tbody = document.getElementById('licensesTable');
-            tbody.innerHTML = '';
-
-            licenses.forEach(license => {
-                const client = clients.find(c => c.id === license.clientId);
-                const status = getLicenseStatus(license.endDate);
-                const row = tbody.insertRow();
-                
-                row.innerHTML = `
-                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
-                    <td>${license.software}</td>
-                    <td>${license.version}</td>
-                    <td>${license.startDate !== '-' ? new Date(license.startDate).toLocaleDateString('pt-BR') : '-'}</td>
-                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
-                    <td><span class="status ${status.class}">${status.text}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-warning" onclick="renewLicense(${license.id})">Renovar</button>
-                            <button class="btn btn-danger" onclick="deleteLicense(${license.id})">Excluir</button>
-                        </div>
-                    </td>
-                `;
-            });
-        }
-
-        function updateClientSelect() {
-            const select = document.getElementById('licenseClient');
-            select.innerHTML = '<option value="">Selecione um cliente</option>';
+            const tableBody = document.getElementById('licensesTable');
             
-            clients.forEach(client => {
-                const option = document.createElement('option');
-                option.value = client.id;
-                option.textContent = client.name;
-                select.appendChild(option);
-            });
+            if (window.licenses.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #747d8c;">Nenhuma licença cadastrada</td></tr>';
+                return;
+            }
+            
+            const sortedLicenses = [...window.licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+            
+            const html = sortedLicenses.map(license => {
+                const client = window.clients.find(c => c.id === license.clientId);
+                const statusInfo = getLicenseStatus(license);
+                
+                return `
+                    <tr>
+                        <td>${client ? client.name : 'Cliente não encontrado'}</td>
+                        <td>${license.software}</td>
+                        <td>${license.version}</td>
+                        <td>${formatDate(license.startDate)}</td>
+                        <td>${formatDate(license.endDate)}</td>
+                        <td><span class="badge ${statusInfo.class}">${statusInfo.status}</span></td>
+                        <td>
+                            <button class="btn btn-warning btn-small" onclick="renewLicense(${license.id})">
+                                Renovar
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="removeLicense(${license.id})">
+                                Remover
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tableBody.innerHTML = html;
         }
 
-        function getLicenseStatus(endDate) {
-            const today = new Date();
-            const end = new Date(endDate);
-            const diffTime = end - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        // ===== FUNÇÕES DE RELATÓRIOS =====
+        function savePrices() {
+            window.prices.bitdefender = parseFloat(document.getElementById('bitdefenderPrice').value) || 0;
+            window.prices.kaseya = parseFloat(document.getElementById('kaseyaPrice').value) || 0;
+            window.prices.acronisWorkload = parseFloat(document.getElementById('acronisWorkloadPrice').value) || 0;
+            window.prices.acronisStorage = parseFloat(document.getElementById('acronisStoragePrice').value) || 0;
+            
+            localStorage.setItem('prices', JSON.stringify(window.prices));
+            
+            updateReportsTable();
+            updateDashboard();
+            showNotification('Preços salvos com sucesso!');
+        }
 
-            if (diffDays < 0) {
-                return { class: 'expired', text: 'Expirada' };
-            } else if (diffDays <= 30) {
-                return { class: 'expiring', text: 'Expirando' };
-            } else {
-                return { class: 'active', text: 'Ativa' };
+        function calculateLicenseCost(license) {
+            if (!isLicenseActive(license)) return 0;
+            
+            switch (license.software) {
+                case 'BitDefender':
+                    return window.prices.bitdefender;
+                case 'Kaseya':
+                    return window.prices.kaseya;
+                case 'Acronis':
+                    if (license.acronisModel === 'workload') {
+                        return window.prices.acronisWorkload * (license.acronisDevices || 1);
+                    } else {
+                        return window.prices.acronisStorage * (license.acronisStorage || 0);
+                    }
+                default:
+                    return 0;
             }
         }
 
-        function getDaysRemaining(endDate) {
-            const today = new Date();
-            const end = new Date(endDate);
-            const diffTime = end - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
+        function updateReportsTable() {
+            const tableBody = document.getElementById('reportsTable');
+            
+            if (window.clients.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #747d8c;">Nenhum cliente cadastrado</td></tr>';
+                updateFinancialSummary(0, 0);
+                return;
+            }
+            
+            let totalMonthly = 0;
+            
+            const html = window.clients.map(client => {
+                const clientLicenses = window.licenses.filter(l => l.clientId === client.id);
+                
+                let bitdefenderCost = 0;
+                let kaseyaCost = 0;
+                let acronisCost = 0;
+                
+                clientLicenses.forEach(license => {
+                    const cost = calculateLicenseCost(license);
+                    
+                    switch (license.software) {
+                        case 'BitDefender':
+                            bitdefenderCost += cost;
+                            break;
+                        case 'Kaseya':
+                            kaseyaCost += cost;
+                            break;
+                        case 'Acronis':
+                            acronisCost += cost;
+                            break;
+                    }
+                });
+                
+                const clientTotal = bitdefenderCost + kaseyaCost + acronisCost;
+                totalMonthly += clientTotal;
+                
+                return `
+                    <tr>
+                        <td>${client.name}</td>
+                        <td>${formatCurrency(bitdefenderCost)}</td>
+                        <td>${formatCurrency(kaseyaCost)}</td>
+                        <td>${formatCurrency(acronisCost)}</td>
+                        <td><strong>${formatCurrency(clientTotal)}</strong></td>
+                        <td><strong>${formatCurrency(clientTotal * 12)}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tableBody.innerHTML = html;
+            updateFinancialSummary(totalMonthly, window.clients.length);
         }
 
+        function updateFinancialSummary(totalMonthly, clientCount) {
+            document.getElementById('monthlyRevenue').textContent = formatCurrency(totalMonthly);
+            document.getElementById('annualRevenue').textContent = formatCurrency(totalMonthly * 12);
+            document.getElementById('avgPerClient').textContent = formatCurrency(clientCount > 0 ? totalMonthly / clientCount : 0);
+        }
+
+        // ===== FUNÇÕES DO DASHBOARD =====
         function updateDashboard() {
-            document.getElementById('totalClients').textContent = clients.length;
-            document.getElementById('totalLicenses').textContent = licenses.length;
+            const totalClients = window.clients.length;
+            const totalLicenses = window.licenses.length;
+            const activeLicenses = window.licenses.filter(isLicenseActive).length;
+            const expiringLicenses = window.licenses.filter(license => {
+                const statusInfo = getLicenseStatus(license);
+                return statusInfo.status === 'Expirando';
+            }).length;
             
-            const activeLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'active').length;
-            const expiringLicenses = licenses.filter(l => getDaysRemaining(l.endDate) <= 30 && getDaysRemaining(l.endDate) > 0).length;
+            let totalMonthlyCost = 0;
+            window.licenses.forEach(license => {
+                totalMonthlyCost += calculateLicenseCost(license);
+            });
             
+            document.getElementById('totalClients').textContent = totalClients;
+            document.getElementById('totalLicenses').textContent = totalLicenses;
             document.getElementById('activeLicenses').textContent = activeLicenses;
             document.getElementById('expiringLicenses').textContent = expiringLicenses;
-
-            const alertsDiv = document.getElementById('dashboardAlerts');
-            alertsDiv.innerHTML = '';
-
-            const expiredLicenses = licenses.filter(l => getLicenseStatus(l.endDate).class === 'expired').length;
+            document.getElementById('totalMonthlyCost').textContent = formatCurrency(totalMonthlyCost);
             
-            if (expiredLicenses > 0) {
-                alertsDiv.innerHTML += `<div class="alert alert-warning">⚠️ Atenção: ${expiredLicenses} licença(s) expirada(s)</div>`;
-            }
-            
-            if (expiringLicenses > 0) {
-                alertsDiv.innerHTML += `<div class="alert alert-warning">🔔 Alerta: ${expiringLicenses} licença(s) expirando em 30 dias</div>`;
-            }
-
-            if (licenses.length === 0) {
-                alertsDiv.innerHTML += `<div class="alert alert-success">✨ Nenhuma licença cadastrada ainda. Comece adicionando seus clientes e licenças!</div>`;
-            }
-
+            updateAlerts();
             updateDashboardTable();
+            updateInventoryDisplay();
+        }
+
+        function updateAlerts() {
+            const alertsContainer = document.getElementById('alertsContainer');
+            let alertsHTML = '';
+            
+            const expiredLicenses = window.licenses.filter(license => {
+                const statusInfo = getLicenseStatus(license);
+                return statusInfo.status === 'Expirada';
+            });
+            
+            if (expiredLicenses.length > 0) {
+                alertsHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Atenção:</strong> ${expiredLicenses.length} licença(s) expirada(s). 
+                        Verifique a tabela abaixo para mais detalhes.
+                    </div>
+                `;
+            }
+            
+            const lowStock = [];
+            if (window.inventory.bitdefender.total - window.inventory.bitdefender.used < 5) {
+                lowStock.push('BitDefender');
+            }
+            if (window.inventory.kaseya.total - window.inventory.kaseya.used < 5) {
+                lowStock.push('Kaseya');
+            }
+            
+            if (lowStock.length > 0) {
+                alertsHTML += `
+                    <div class="alert alert-warning">
+                        <strong>Estoque Baixo:</strong> ${lowStock.join(', ')} com menos de 5 licenças disponíveis.
+                    </div>
+                `;
+            }
+            
+            alertsContainer.innerHTML = alertsHTML;
         }
 
         function updateDashboardTable() {
-            const tbody = document.getElementById('dashboardTable');
-            tbody.innerHTML = '';
-
-            const sortedLicenses = [...licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-
-            sortedLicenses.forEach(license => {
-                const client = clients.find(c => c.id === license.clientId);
-                const status = getLicenseStatus(license.endDate);
-                const daysRemaining = getDaysRemaining(license.endDate);
-                const row = tbody.insertRow();
+            const tableBody = document.getElementById('dashboardTable');
+            
+            if (window.licenses.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #747d8c;">Nenhuma licença cadastrada</td></tr>';
+                return;
+            }
+            
+            const sortedLicenses = [...window.licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+            
+            const html = sortedLicenses.slice(0, 10).map(license => {
+                const client = window.clients.find(c => c.id === license.clientId);
+                const statusInfo = getLicenseStatus(license);
                 
-                row.innerHTML = `
-                    <td>${client ? client.name : 'Cliente não encontrado'}</td>
-                    <td>${license.software}</td>
-                    <td>${new Date(license.endDate).toLocaleDateString('pt-BR')}</td>
-                    <td><span class="status ${status.class}">${status.text}</span></td>
-                    <td>${daysRemaining < 0 ? 'Expirada' : daysRemaining + ' dias'}</td>
+                return `
+                    <tr>
+                        <td>${client ? client.name : 'Cliente não encontrado'}</td>
+                        <td>${license.software}</td>
+                        <td>${license.version}</td>
+                        <td>${formatDate(license.endDate)}</td>
+                        <td><span class="badge ${statusInfo.class}">${statusInfo.status}</span></td>
+                        <td>
+                            <button class="btn btn-warning btn-small" onclick="renewLicense(${license.id})">
+                                Renovar
+                            </button>
+                        </td>
+                    </tr>
                 `;
-            });
+            }).join('');
+            
+            tableBody.innerHTML = html;
         }
+
+        // Tornar funções globais
+        window.showTab = showTab;
+        window.updateInventory = updateInventory;
+        window.addClient = addClient;
+        window.removeClient = removeClient;
+        window.addLicense = addLicense;
+        window.renewLicense = renewLicense;
+        window.removeLicense = removeLicense;
+        window.showAcronisConfig = showAcronisConfig;
+        window.selectAcronisModel = selectAcronisModel;
+        window.savePrices = savePrices;
+
+        // Inicializar aplicação
+        loadData();
     </script>
 </body>
 </html>
