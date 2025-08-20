@@ -667,7 +667,7 @@
                             <tr>
                                 <th>Cliente</th>
                                 <th>Software</th>
-                                <th>Versão</th>
+                                <th>Quantidade</th>
                                 <th>Vencimento</th>
                                 <th>Status</th>
                                 <th>Ações</th>
@@ -773,8 +773,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Versão:</label>
-                            <input type="text" id="licenseVersion" class="form-control" placeholder="Ex: Enterprise 2024">
+                            <label>Quantidade:</label>
+                            <input type="number" id="licenseQuantity" class="form-control" placeholder="Ex: 5" min="1" value="1">
                         </div>
                     </div>
                     <div>
@@ -785,10 +785,6 @@
                         <div class="form-group">
                             <label>Data de Fim:</label>
                             <input type="date" id="licenseEndDate" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Chave da Licença:</label>
-                            <input type="text" id="licenseKey" class="form-control" placeholder="Chave ou código da licença">
                         </div>
                     </div>
                 </div>
@@ -822,7 +818,7 @@
                             <tr>
                                 <th>Cliente</th>
                                 <th>Software</th>
-                                <th>Versão</th>
+                                <th>Quantidade</th>
                                 <th>Início</th>
                                 <th>Fim</th>
                                 <th>Status</th>
@@ -1017,8 +1013,13 @@
         }
 
         function updateInventoryUsed() {
-            window.inventory.bitdefender.used = window.licenses.filter(l => l.software === 'BitDefender' && isLicenseActive(l)).length;
-            window.inventory.kaseya.used = window.licenses.filter(l => l.software === 'Kaseya' && isLicenseActive(l)).length;
+            window.inventory.bitdefender.used = window.licenses
+                .filter(l => l.software === 'BitDefender' && isLicenseActive(l))
+                .reduce((total, license) => total + (license.quantity || 1), 0);
+            
+            window.inventory.kaseya.used = window.licenses
+                .filter(l => l.software === 'Kaseya' && isLicenseActive(l))
+                .reduce((total, license) => total + (license.quantity || 1), 0);
         }
 
         function isLicenseActive(license) {
@@ -1261,12 +1262,11 @@
         function addLicense() {
             const clientId = parseInt(document.getElementById('licenseClient').value);
             const software = document.getElementById('licenseSoftware').value;
-            const version = document.getElementById('licenseVersion').value.trim();
+            const quantity = parseInt(document.getElementById('licenseQuantity').value) || 1;
             const startDate = document.getElementById('licenseStartDate').value;
             const endDate = document.getElementById('licenseEndDate').value;
-            const key = document.getElementById('licenseKey').value.trim();
             
-            if (!clientId || !software || !version || !startDate || !endDate) {
+            if (!clientId || !software || !startDate || !endDate) {
                 showNotification('Todos os campos são obrigatórios!', 'error');
                 return;
             }
@@ -1275,10 +1275,9 @@
                 id: Date.now(),
                 clientId,
                 software,
-                version,
+                quantity,
                 startDate,
                 endDate,
-                key,
                 createdAt: new Date().toISOString()
             };
             
@@ -1303,16 +1302,17 @@
                 }
             }
             
+            // Verificar disponibilidade de inventário (considerando quantidade)
             if (software === 'BitDefender') {
                 const available = window.inventory.bitdefender.total - window.inventory.bitdefender.used;
-                if (available <= 0) {
-                    showNotification('Não há licenças BitDefender disponíveis no inventário!', 'error');
+                if (available < quantity) {
+                    showNotification(`Apenas ${available} licenças BitDefender disponíveis no inventário!`, 'error');
                     return;
                 }
             } else if (software === 'Kaseya') {
                 const available = window.inventory.kaseya.total - window.inventory.kaseya.used;
-                if (available <= 0) {
-                    showNotification('Não há licenças Kaseya disponíveis no inventário!', 'error');
+                if (available < quantity) {
+                    showNotification(`Apenas ${available} licenças Kaseya disponíveis no inventário!`, 'error');
                     return;
                 }
             }
@@ -1322,10 +1322,9 @@
             
             document.getElementById('licenseClient').value = '';
             document.getElementById('licenseSoftware').value = '';
-            document.getElementById('licenseVersion').value = '';
+            document.getElementById('licenseQuantity').value = '1';
             document.getElementById('licenseStartDate').value = '';
             document.getElementById('licenseEndDate').value = '';
-            document.getElementById('licenseKey').value = '';
             document.getElementById('acronisConfig').style.display = 'none';
             
             updateInventoryUsed();
@@ -1381,7 +1380,7 @@
                     <tr>
                         <td>${client ? client.name : 'Cliente não encontrado'}</td>
                         <td>${license.software}</td>
-                        <td>${license.version}</td>
+                        <td>${license.quantity || 1}</td>
                         <td>${formatDate(license.startDate)}</td>
                         <td>${formatDate(license.endDate)}</td>
                         <td><span class="badge ${statusInfo.class}">${statusInfo.status}</span></td>
@@ -1417,11 +1416,13 @@
         function calculateLicenseCost(license) {
             if (!isLicenseActive(license)) return 0;
             
+            const quantity = license.quantity || 1;
+            
             switch (license.software) {
                 case 'BitDefender':
-                    return window.prices.bitdefender;
+                    return window.prices.bitdefender * quantity;
                 case 'Kaseya':
-                    return window.prices.kaseya;
+                    return window.prices.kaseya * quantity;
                 case 'Acronis':
                     if (license.acronisModel === 'workload') {
                         return window.prices.acronisWorkload * (license.acronisDevices || 1);
@@ -1573,7 +1574,7 @@
                     <tr>
                         <td>${client ? client.name : 'Cliente não encontrado'}</td>
                         <td>${license.software}</td>
-                        <td>${license.version}</td>
+                        <td>${license.quantity || 1}</td>
                         <td>${formatDate(license.endDate)}</td>
                         <td><span class="badge ${statusInfo.class}">${statusInfo.status}</span></td>
                         <td>
