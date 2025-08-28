@@ -437,7 +437,7 @@
             background: #ff6b6b;
         }
 
-        .acronis-config {
+        .kaseya-config, .acronis-config {
             background: #fafbfc;
             border: 1px solid #e1e8ed;
             border-radius: 6px;
@@ -447,7 +447,7 @@
 
         .model-selector {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-bottom: 20px;
         }
@@ -478,6 +478,32 @@
             font-size: 12px;
             color: #747d8c;
             margin: 0;
+        }
+
+        .kaseya-modules {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .kaseya-modules h5 {
+            margin-bottom: 12px;
+            color: #2f3542;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .kaseya-modules ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .kaseya-modules li {
+            color: #747d8c;
+            font-size: 12px;
+            margin-bottom: 4px;
         }
 
         h2, h3 {
@@ -697,12 +723,28 @@
                         <button class="btn btn-primary" onclick="updateInventory('bitdefender')">Atualizar BitDefender</button>
                     </div>
                     <div>
-                        <h3>RMM (Kaseya)</h3>
+                        <h3>Kaseya Endpoint</h3>
                         <div class="form-group">
                             <label>Total de Licenças Compradas:</label>
-                            <input type="number" id="kaseyaTotal" class="form-control" placeholder="Ex: 50">
+                            <input type="number" id="kaseyaEndpointTotal" class="form-control" placeholder="Ex: 50">
                         </div>
-                        <button class="btn btn-primary" onclick="updateInventory('kaseya')">Atualizar RMM</button>
+                        <button class="btn btn-primary" onclick="updateInventory('kaseyaEndpoint')">Atualizar Kaseya Endpoint</button>
+                    </div>
+                    <div>
+                        <h3>Kaseya Endpoint Pro</h3>
+                        <div class="form-group">
+                            <label>Total de Licenças Compradas:</label>
+                            <input type="number" id="kaseyaEndpointProTotal" class="form-control" placeholder="Ex: 30">
+                        </div>
+                        <button class="btn btn-primary" onclick="updateInventory('kaseyaEndpointPro')">Atualizar Kaseya Endpoint Pro</button>
+                    </div>
+                    <div>
+                        <h3>Kaseya User</h3>
+                        <div class="form-group">
+                            <label>Total de Licenças Compradas:</label>
+                            <input type="number" id="kaseyaUserTotal" class="form-control" placeholder="Ex: 20">
+                        </div>
+                        <button class="btn btn-primary" onclick="updateInventory('kaseyaUser')">Atualizar Kaseya User</button>
                     </div>
                 </div>
 
@@ -765,14 +807,14 @@
                         </div>
                         <div class="form-group">
                             <label>Software:</label>
-                            <select id="licenseSoftware" class="form-control" onchange="showAcronisConfig()">
+                            <select id="licenseSoftware" class="form-control" onchange="showSoftwareConfig()">
                                 <option value="">Selecione o software</option>
                                 <option value="BitDefender">BitDefender</option>
-                                <option value="Kaseya">Kaseya (RMM)</option>
+                                <option value="Kaseya">Kaseya</option>
                                 <option value="Acronis">Acronis (Backup)</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="quantityGroup">
                             <label>Quantidade:</label>
                             <input type="number" id="licenseQuantity" class="form-control" placeholder="Ex: 5" min="1" value="1">
                         </div>
@@ -786,6 +828,35 @@
                             <label>Data de Fim:</label>
                             <input type="date" id="licenseEndDate" class="form-control">
                         </div>
+                    </div>
+                </div>
+
+                <!-- Configuração específica do Kaseya -->
+                <div id="kaseyaConfig" class="kaseya-config" style="display: none;">
+                    <h4 style="margin-bottom: 15px; color: #2f3542;">Configuração Kaseya</h4>
+                    <div class="model-selector">
+                        <div class="model-option active" onclick="selectKaseyaType('endpoint')" id="kaseyaEndpoint">
+                            <h4>Kaseya 365 Endpoint</h4>
+                            <p>5 módulos inclusos</p>
+                        </div>
+                        <div class="model-option" onclick="selectKaseyaType('endpointPro')" id="kaseyaEndpointPro">
+                            <h4>Kaseya 365 Endpoint Pro</h4>
+                            <p>6 módulos inclusos</p>
+                        </div>
+                        <div class="model-option" onclick="selectKaseyaType('user')" id="kaseyaUser">
+                            <h4>Kaseya 365 User</h4>
+                            <p>5 módulos inclusos</p>
+                        </div>
+                    </div>
+                    <div class="kaseya-modules" id="kaseyaModules">
+                        <h5>Módulos inclusos:</h5>
+                        <ul id="kaseyaModulesList">
+                            <li>Unified RMM</li>
+                            <li>Advanced Software Management</li>
+                            <li>Endpoint Backup</li>
+                            <li>Anti-Virus</li>
+                            <li>Endpoint Detection and Response</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -818,6 +889,7 @@
                             <tr>
                                 <th>Cliente</th>
                                 <th>Software</th>
+                                <th>Tipo/Detalhes</th>
                                 <th>Quantidade</th>
                                 <th>Início</th>
                                 <th>Fim</th>
@@ -845,8 +917,16 @@
                                 <input type="number" step="0.01" id="bitdefenderPrice" class="form-control" value="98.64">
                             </div>
                             <div class="form-group">
-                                <label>Kaseya/RMM (R$/mês):</label>
-                                <input type="number" step="0.01" id="kaseyaPrice" class="form-control" value="0">
+                                <label>Kaseya 365 Endpoint (R$/mês):</label>
+                                <input type="number" step="0.01" id="kaseyaEndpointPrice" class="form-control" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Kaseya 365 Endpoint Pro (R$/mês):</label>
+                                <input type="number" step="0.01" id="kaseyaEndpointProPrice" class="form-control" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Kaseya 365 User (R$/mês):</label>
+                                <input type="number" step="0.01" id="kaseyaUserPrice" class="form-control" value="0">
                             </div>
                             <div class="form-group">
                                 <label>Acronis Per-Workload (R$/mês):</label>
@@ -885,7 +965,9 @@
                             <tr>
                                 <th>Cliente</th>
                                 <th>BitDefender</th>
-                                <th>Kaseya</th>
+                                <th>Kaseya Endpoint</th>
+                                <th>Kaseya Endpoint Pro</th>
+                                <th>Kaseya User</th>
                                 <th>Acronis</th>
                                 <th>Total Mensal</th>
                                 <th>Total Anual</th>
@@ -903,18 +985,48 @@
     <div id="notification" class="notification"></div>
 
     <script>
-        // Dados simulados (remover Firebase por enquanto para versão limpa)
+        // Dados simulados (usando localStorage para persistência)
         window.clients = [];
         window.licenses = [];
         window.inventory = {
             bitdefender: { total: 0, used: 0 },
-            kaseya: { total: 0, used: 0 }
+            kaseyaEndpoint: { total: 0, used: 0 },
+            kaseyaEndpointPro: { total: 0, used: 0 },
+            kaseyaUser: { total: 0, used: 0 }
         };
         window.prices = {
             bitdefender: 98.64,
-            kaseya: 0,
+            kaseyaEndpoint: 0,
+            kaseyaEndpointPro: 0,
+            kaseyaUser: 0,
             acronisWorkload: 0,
             acronisStorage: 0
+        };
+
+        // Definições dos módulos Kaseya
+        window.kaseyaModules = {
+            endpoint: [
+                'Unified RMM',
+                'Advanced Software Management', 
+                'Endpoint Backup',
+                'Anti-Virus',
+                'Endpoint Detection and Response'
+            ],
+            endpointPro: [
+                'Unified RMM',
+                'Advanced Software Management',
+                'Endpoint Backup', 
+                'Anti-Virus',
+                'Endpoint Detection and Response',
+                'Managed Detection and Response'
+            ],
+            user: [
+                'SaaS Backup',
+                'Security Awareness Training',
+                'Anti-Phishing Software',
+                'Cloud Detection and Response',
+                'Dark Web Monitoring'
+            ]
         };
 
         // Carregar dados do localStorage
@@ -923,14 +1035,14 @@
                 // Carregar preços
                 const savedPrices = localStorage.getItem('prices');
                 if (savedPrices) {
-                    window.prices = JSON.parse(savedPrices);
+                    window.prices = Object.assign(window.prices, JSON.parse(savedPrices));
                     updatePriceInputs();
                 }
 
                 // Carregar inventário
                 const savedInventory = localStorage.getItem('inventory');
                 if (savedInventory) {
-                    window.inventory = JSON.parse(savedInventory);
+                    window.inventory = Object.assign(window.inventory, JSON.parse(savedInventory));
                     updateInventoryInputs();
                 }
 
@@ -1002,24 +1114,45 @@
 
         function updatePriceInputs() {
             document.getElementById('bitdefenderPrice').value = window.prices.bitdefender;
-            document.getElementById('kaseyaPrice').value = window.prices.kaseya;
+            document.getElementById('kaseyaEndpointPrice').value = window.prices.kaseyaEndpoint;
+            document.getElementById('kaseyaEndpointProPrice').value = window.prices.kaseyaEndpointPro;
+            document.getElementById('kaseyaUserPrice').value = window.prices.kaseyaUser;
             document.getElementById('acronisWorkloadPrice').value = window.prices.acronisWorkload;
             document.getElementById('acronisStoragePrice').value = window.prices.acronisStorage;
         }
 
         function updateInventoryInputs() {
             document.getElementById('bitdefenderTotal').value = window.inventory.bitdefender.total;
-            document.getElementById('kaseyaTotal').value = window.inventory.kaseya.total;
+            document.getElementById('kaseyaEndpointTotal').value = window.inventory.kaseyaEndpoint.total;
+            document.getElementById('kaseyaEndpointProTotal').value = window.inventory.kaseyaEndpointPro.total;
+            document.getElementById('kaseyaUserTotal').value = window.inventory.kaseyaUser.total;
         }
 
         function updateInventoryUsed() {
-            window.inventory.bitdefender.used = window.licenses
-                .filter(l => l.software === 'BitDefender' && isLicenseActive(l))
-                .reduce((total, license) => total + (license.quantity || 1), 0);
-            
-            window.inventory.kaseya.used = window.licenses
-                .filter(l => l.software === 'Kaseya' && isLicenseActive(l))
-                .reduce((total, license) => total + (license.quantity || 1), 0);
+            // Reset todos os contadores
+            window.inventory.bitdefender.used = 0;
+            window.inventory.kaseyaEndpoint.used = 0;
+            window.inventory.kaseyaEndpointPro.used = 0;
+            window.inventory.kaseyaUser.used = 0;
+
+            // Contar licenças ativas
+            window.licenses.forEach(license => {
+                if (!isLicenseActive(license)) return;
+                
+                const quantity = license.quantity || 1;
+                
+                if (license.software === 'BitDefender') {
+                    window.inventory.bitdefender.used += quantity;
+                } else if (license.software === 'Kaseya') {
+                    if (license.kaseyaType === 'endpoint') {
+                        window.inventory.kaseyaEndpoint.used += quantity;
+                    } else if (license.kaseyaType === 'endpointPro') {
+                        window.inventory.kaseyaEndpointPro.used += quantity;
+                    } else if (license.kaseyaType === 'user') {
+                        window.inventory.kaseyaUser.used += quantity;
+                    }
+                }
+            });
         }
 
         function isLicenseActive(license) {
@@ -1054,6 +1187,15 @@
             }).format(value);
         }
 
+        function getKaseyaTypeLabel(type) {
+            const labels = {
+                'endpoint': 'Kaseya 365 Endpoint',
+                'endpointPro': 'Kaseya 365 Endpoint Pro', 
+                'user': 'Kaseya 365 User'
+            };
+            return labels[type] || type;
+        }
+
         // ===== FUNÇÕES DE INVENTÁRIO =====
         function updateInventory(type) {
             const totalInput = document.getElementById(`${type}Total`);
@@ -1064,7 +1206,13 @@
             
             updateInventoryDisplay();
             updateDashboard();
-            showNotification(`Inventário ${type} atualizado com sucesso!`);
+            
+            const typeLabel = type === 'bitdefender' ? 'BitDefender' : 
+                             type === 'kaseyaEndpoint' ? 'Kaseya 365 Endpoint' :
+                             type === 'kaseyaEndpointPro' ? 'Kaseya 365 Endpoint Pro' :
+                             'Kaseya 365 User';
+            
+            showNotification(`Inventário ${typeLabel} atualizado com sucesso!`);
         }
 
         function updateInventoryDisplay() {
@@ -1074,17 +1222,22 @@
             let summaryHTML = '';
             let detailsHTML = '';
             
-            ['bitdefender', 'kaseya'].forEach(type => {
-                const data = window.inventory[type];
+            const inventoryTypes = [
+                { key: 'bitdefender', label: 'BitDefender' },
+                { key: 'kaseyaEndpoint', label: 'Kaseya 365 Endpoint' },
+                { key: 'kaseyaEndpointPro', label: 'Kaseya 365 Endpoint Pro' },
+                { key: 'kaseyaUser', label: 'Kaseya 365 User' }
+            ];
+            
+            inventoryTypes.forEach(({ key, label }) => {
+                const data = window.inventory[key];
                 const percentage = data.total > 0 ? (data.used / data.total) * 100 : 0;
                 const available = data.total - data.used;
-                
-                const typeLabel = type === 'bitdefender' ? 'BitDefender' : 'RMM (Kaseya)';
                 
                 summaryHTML += `
                     <div class="inventory-card">
                         <div class="inventory-header">
-                            <div class="inventory-title">${typeLabel}</div>
+                            <div class="inventory-title">${label}</div>
                             <div>${data.used}/${data.total}</div>
                         </div>
                         <div class="inventory-progress">
@@ -1102,7 +1255,7 @@
                 detailsHTML += `
                     <div class="inventory-card">
                         <div class="inventory-header">
-                            <div class="inventory-title">${typeLabel}</div>
+                            <div class="inventory-title">${label}</div>
                             <div style="font-size: 1.5rem; font-weight: bold; color: #2f3542;">
                                 ${data.used}/${data.total}
                             </div>
@@ -1221,20 +1374,49 @@
             select.innerHTML = html;
         }
 
-        // ===== FUNÇÕES DE LICENÇAS =====
-        function showAcronisConfig() {
+        // ===== FUNÇÕES DE CONFIGURAÇÃO DE SOFTWARE =====
+        function showSoftwareConfig() {
             const software = document.getElementById('licenseSoftware').value;
-            const config = document.getElementById('acronisConfig');
+            const kaseyaConfig = document.getElementById('kaseyaConfig');
+            const acronisConfig = document.getElementById('acronisConfig');
             
-            if (software === 'Acronis') {
-                config.style.display = 'block';
-            } else {
-                config.style.display = 'none';
+            // Esconder todas as configurações
+            kaseyaConfig.style.display = 'none';
+            acronisConfig.style.display = 'none';
+            
+            if (software === 'Kaseya') {
+                kaseyaConfig.style.display = 'block';
+            } else if (software === 'Acronis') {
+                acronisConfig.style.display = 'block';
             }
         }
 
+        function selectKaseyaType(type) {
+            // Remover active de todas as opções
+            document.querySelectorAll('#kaseyaConfig .model-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // Adicionar active na opção selecionada
+            const typeMap = {
+                'endpoint': 'kaseyaEndpoint',
+                'endpointPro': 'kaseyaEndpointPro', 
+                'user': 'kaseyaUser'
+            };
+            
+            document.getElementById(typeMap[type]).classList.add('active');
+            
+            // Atualizar lista de módulos
+            const modulesList = document.getElementById('kaseyaModulesList');
+            const modules = window.kaseyaModules[type];
+            
+            modulesList.innerHTML = modules.map(module => 
+                `<li>${module}</li>`
+            ).join('');
+        }
+
         function selectAcronisModel(model) {
-            document.querySelectorAll('.model-option').forEach(option => {
+            document.querySelectorAll('#acronisConfig .model-option').forEach(option => {
                 option.classList.remove('active');
             });
             
@@ -1259,6 +1441,7 @@
             }
         }
 
+        // ===== FUNÇÕES DE LICENÇAS =====
         function addLicense() {
             const clientId = parseInt(document.getElementById('licenseClient').value);
             const software = document.getElementById('licenseSoftware').value;
@@ -1281,7 +1464,28 @@
                 createdAt: new Date().toISOString()
             };
             
-            if (software === 'Acronis') {
+            // Configurações específicas por software
+            if (software === 'Kaseya') {
+                const activeKaseya = document.querySelector('#kaseyaConfig .model-option.active');
+                if (!activeKaseya) {
+                    showNotification('Selecione o tipo de licença Kaseya!', 'error');
+                    return;
+                }
+                
+                const kaseyaType = activeKaseya.id.replace('kaseya', '').replace('Endpoint', 'endpoint').replace('EndpointPro', 'endpointPro').replace('User', 'user');
+                licenseData.kaseyaType = kaseyaType;
+                
+                // Verificar disponibilidade no inventário
+                const inventoryKey = kaseyaType === 'endpoint' ? 'kaseyaEndpoint' : 
+                                   kaseyaType === 'endpointPro' ? 'kaseyaEndpointPro' : 'kaseyaUser';
+                const available = window.inventory[inventoryKey].total - window.inventory[inventoryKey].used;
+                
+                if (available < quantity) {
+                    showNotification(`Apenas ${available} licenças ${getKaseyaTypeLabel(kaseyaType)} disponíveis no inventário!`, 'error');
+                    return;
+                }
+                
+            } else if (software === 'Acronis') {
                 const isWorkloadModel = document.getElementById('workloadModel').classList.contains('active');
                 licenseData.acronisModel = isWorkloadModel ? 'workload' : 'storage';
                 
@@ -1300,19 +1504,12 @@
                     }
                     licenseData.acronisStorage = parseInt(storage);
                 }
-            }
-            
-            // Verificar disponibilidade de inventário (considerando quantidade)
-            if (software === 'BitDefender') {
+                
+            } else if (software === 'BitDefender') {
+                // Verificar disponibilidade de inventário BitDefender
                 const available = window.inventory.bitdefender.total - window.inventory.bitdefender.used;
                 if (available < quantity) {
                     showNotification(`Apenas ${available} licenças BitDefender disponíveis no inventário!`, 'error');
-                    return;
-                }
-            } else if (software === 'Kaseya') {
-                const available = window.inventory.kaseya.total - window.inventory.kaseya.used;
-                if (available < quantity) {
-                    showNotification(`Apenas ${available} licenças Kaseya disponíveis no inventário!`, 'error');
                     return;
                 }
             }
@@ -1320,11 +1517,13 @@
             window.licenses.push(licenseData);
             localStorage.setItem('licenses', JSON.stringify(window.licenses));
             
+            // Limpar formulário
             document.getElementById('licenseClient').value = '';
             document.getElementById('licenseSoftware').value = '';
             document.getElementById('licenseQuantity').value = '1';
             document.getElementById('licenseStartDate').value = '';
             document.getElementById('licenseEndDate').value = '';
+            document.getElementById('kaseyaConfig').style.display = 'none';
             document.getElementById('acronisConfig').style.display = 'none';
             
             updateInventoryUsed();
@@ -1366,7 +1565,7 @@
             const tableBody = document.getElementById('licensesTable');
             
             if (window.licenses.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #747d8c;">Nenhuma licença cadastrada</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #747d8c;">Nenhuma licença cadastrada</td></tr>';
                 return;
             }
             
@@ -1376,10 +1575,24 @@
                 const client = window.clients.find(c => c.id === license.clientId);
                 const statusInfo = getLicenseStatus(license);
                 
+                let typeDetails = '';
+                if (license.software === 'Kaseya') {
+                    typeDetails = getKaseyaTypeLabel(license.kaseyaType);
+                } else if (license.software === 'Acronis') {
+                    if (license.acronisModel === 'workload') {
+                        typeDetails = `Per-Workload (${license.acronisDevices} dispositivos)`;
+                    } else {
+                        typeDetails = `Per-GB (${license.acronisStorage} GB)`;
+                    }
+                } else {
+                    typeDetails = '-';
+                }
+                
                 return `
                     <tr>
                         <td>${client ? client.name : 'Cliente não encontrado'}</td>
                         <td>${license.software}</td>
+                        <td>${typeDetails}</td>
                         <td>${license.quantity || 1}</td>
                         <td>${formatDate(license.startDate)}</td>
                         <td>${formatDate(license.endDate)}</td>
@@ -1402,7 +1615,9 @@
         // ===== FUNÇÕES DE RELATÓRIOS =====
         function savePrices() {
             window.prices.bitdefender = parseFloat(document.getElementById('bitdefenderPrice').value) || 0;
-            window.prices.kaseya = parseFloat(document.getElementById('kaseyaPrice').value) || 0;
+            window.prices.kaseyaEndpoint = parseFloat(document.getElementById('kaseyaEndpointPrice').value) || 0;
+            window.prices.kaseyaEndpointPro = parseFloat(document.getElementById('kaseyaEndpointProPrice').value) || 0;
+            window.prices.kaseyaUser = parseFloat(document.getElementById('kaseyaUserPrice').value) || 0;
             window.prices.acronisWorkload = parseFloat(document.getElementById('acronisWorkloadPrice').value) || 0;
             window.prices.acronisStorage = parseFloat(document.getElementById('acronisStoragePrice').value) || 0;
             
@@ -1422,7 +1637,14 @@
                 case 'BitDefender':
                     return window.prices.bitdefender * quantity;
                 case 'Kaseya':
-                    return window.prices.kaseya * quantity;
+                    if (license.kaseyaType === 'endpoint') {
+                        return window.prices.kaseyaEndpoint * quantity;
+                    } else if (license.kaseyaType === 'endpointPro') {
+                        return window.prices.kaseyaEndpointPro * quantity;
+                    } else if (license.kaseyaType === 'user') {
+                        return window.prices.kaseyaUser * quantity;
+                    }
+                    return 0;
                 case 'Acronis':
                     if (license.acronisModel === 'workload') {
                         return window.prices.acronisWorkload * (license.acronisDevices || 1);
@@ -1438,7 +1660,7 @@
             const tableBody = document.getElementById('reportsTable');
             
             if (window.clients.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #747d8c;">Nenhum cliente cadastrado</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #747d8c;">Nenhum cliente cadastrado</td></tr>';
                 updateFinancialSummary(0, 0);
                 return;
             }
@@ -1449,7 +1671,9 @@
                 const clientLicenses = window.licenses.filter(l => l.clientId === client.id);
                 
                 let bitdefenderCost = 0;
-                let kaseyaCost = 0;
+                let kaseyaEndpointCost = 0;
+                let kaseyaEndpointProCost = 0;
+                let kaseyaUserCost = 0;
                 let acronisCost = 0;
                 
                 clientLicenses.forEach(license => {
@@ -1460,7 +1684,13 @@
                             bitdefenderCost += cost;
                             break;
                         case 'Kaseya':
-                            kaseyaCost += cost;
+                            if (license.kaseyaType === 'endpoint') {
+                                kaseyaEndpointCost += cost;
+                            } else if (license.kaseyaType === 'endpointPro') {
+                                kaseyaEndpointProCost += cost;
+                            } else if (license.kaseyaType === 'user') {
+                                kaseyaUserCost += cost;
+                            }
                             break;
                         case 'Acronis':
                             acronisCost += cost;
@@ -1468,14 +1698,16 @@
                     }
                 });
                 
-                const clientTotal = bitdefenderCost + kaseyaCost + acronisCost;
+                const clientTotal = bitdefenderCost + kaseyaEndpointCost + kaseyaEndpointProCost + kaseyaUserCost + acronisCost;
                 totalMonthly += clientTotal;
                 
                 return `
                     <tr>
                         <td>${client.name}</td>
                         <td>${formatCurrency(bitdefenderCost)}</td>
-                        <td>${formatCurrency(kaseyaCost)}</td>
+                        <td>${formatCurrency(kaseyaEndpointCost)}</td>
+                        <td>${formatCurrency(kaseyaEndpointProCost)}</td>
+                        <td>${formatCurrency(kaseyaUserCost)}</td>
                         <td>${formatCurrency(acronisCost)}</td>
                         <td><strong>${formatCurrency(clientTotal)}</strong></td>
                         <td><strong>${formatCurrency(clientTotal * 12)}</strong></td>
@@ -1537,13 +1769,21 @@
                 `;
             }
             
+            // Verificar estoque baixo para todos os tipos
             const lowStock = [];
-            if (window.inventory.bitdefender.total - window.inventory.bitdefender.used < 5) {
-                lowStock.push('BitDefender');
-            }
-            if (window.inventory.kaseya.total - window.inventory.kaseya.used < 5) {
-                lowStock.push('Kaseya');
-            }
+            const inventoryTypes = [
+                { key: 'bitdefender', label: 'BitDefender' },
+                { key: 'kaseyaEndpoint', label: 'Kaseya 365 Endpoint' },
+                { key: 'kaseyaEndpointPro', label: 'Kaseya 365 Endpoint Pro' },
+                { key: 'kaseyaUser', label: 'Kaseya 365 User' }
+            ];
+            
+            inventoryTypes.forEach(({ key, label }) => {
+                const available = window.inventory[key].total - window.inventory[key].used;
+                if (available < 5 && window.inventory[key].total > 0) {
+                    lowStock.push(label);
+                }
+            });
             
             if (lowStock.length > 0) {
                 alertsHTML += `
@@ -1570,10 +1810,15 @@
                 const client = window.clients.find(c => c.id === license.clientId);
                 const statusInfo = getLicenseStatus(license);
                 
+                let softwareDisplay = license.software;
+                if (license.software === 'Kaseya') {
+                    softwareDisplay = getKaseyaTypeLabel(license.kaseyaType);
+                }
+                
                 return `
                     <tr>
                         <td>${client ? client.name : 'Cliente não encontrado'}</td>
-                        <td>${license.software}</td>
+                        <td>${softwareDisplay}</td>
                         <td>${license.quantity || 1}</td>
                         <td>${formatDate(license.endDate)}</td>
                         <td><span class="badge ${statusInfo.class}">${statusInfo.status}</span></td>
@@ -1597,7 +1842,8 @@
         window.addLicense = addLicense;
         window.renewLicense = renewLicense;
         window.removeLicense = removeLicense;
-        window.showAcronisConfig = showAcronisConfig;
+        window.showSoftwareConfig = showSoftwareConfig;
+        window.selectKaseyaType = selectKaseyaType;
         window.selectAcronisModel = selectAcronisModel;
         window.savePrices = savePrices;
 
