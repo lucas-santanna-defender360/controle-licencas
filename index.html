@@ -1,1854 +1,1107 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistema de Controle de Licenças</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f6fa;
-            min-height: 100vh;
-            color: #2f3542;
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 20px auto;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            border: 1px solid #e1e8ed;
-        }
-
-        .header {
-            background: #2f3542;
-            color: #ffffff;
-            padding: 24px 32px;
-            border-bottom: 1px solid #40475a;
-            position: relative;
-        }
-
-        .firebase-status {
-            position: absolute;
-            top: 16px;
-            right: 24px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            color: #a4b0be;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #00d2d3;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: -0.025em;
-        }
-
-        .header .subtitle {
-            color: #a4b0be;
-            font-size: 14px;
-            margin-top: 4px;
-            font-weight: 400;
-        }
-
-        .nav {
-            background: #ffffff;
-            border-bottom: 1px solid #e1e8ed;
-        }
-
-        .nav-tabs {
-            display: flex;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-tabs li {
-            flex: 1;
-        }
-
-        .nav-tabs button {
-            width: 100%;
-            padding: 16px 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: #747d8c;
-            transition: all 0.2s ease;
-            border-bottom: 2px solid transparent;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            font-family: inherit;
-        }
-
-        .nav-tabs button.active {
-            color: #2f3542;
-            border-bottom-color: #00d2d3;
-            background: #ffffff;
-        }
-
-        .nav-tabs button:hover {
-            color: #2f3542;
-            background: #f8f9fa;
-        }
-
-        .tab-content {
-            padding: 32px;
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: #ffffff;
-            border: 1px solid #e1e8ed;
-            padding: 24px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-
-        .stat-card:hover {
-            border-color: #c7d2fe;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .stat-number {
-            font-size: 28px;
-            font-weight: 700;
-            color: #2f3542;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            color: #747d8c;
-            font-size: 13px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .inventory-card {
-            background: #ffffff;
-            border: 1px solid #e1e8ed;
-            border-radius: 6px;
-            padding: 24px;
-            transition: all 0.2s ease;
-        }
-
-        .inventory-card:hover {
-            border-color: #c7d2fe;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .inventory-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .inventory-title {
-            font-weight: 600;
-            color: #2f3542;
-            font-size: 15px;
-        }
-
-        .inventory-progress {
-            width: 100%;
-            height: 8px;
-            background: #f1f3f4;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .inventory-progress-bar {
-            height: 100%;
-            background: #00d2d3;
-            transition: width 0.3s ease;
-            border-radius: 4px;
-        }
-
-        .inventory-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #747d8c;
-            font-weight: 500;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            color: #2f3542;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e1e8ed;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.2s ease;
-            background: #ffffff;
-            color: #2f3542;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #00d2d3;
-            box-shadow: 0 0 0 3px rgba(0, 210, 211, 0.1);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background: #2f3542;
-            color: #ffffff;
-        }
-
-        .btn-primary:hover {
-            background: #40475a;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(47, 53, 66, 0.2);
-        }
-
-        .btn-success {
-            background: #00d2d3;
-            color: #ffffff;
-        }
-
-        .btn-success:hover {
-            background: #00b8b9;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 210, 211, 0.2);
-        }
-
-        .btn-warning {
-            background: #ff9f43;
-            color: #ffffff;
-        }
-
-        .btn-warning:hover {
-            background: #ff8c1a;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(255, 159, 67, 0.2);
-        }
-
-        .btn-danger {
-            background: #ff6b6b;
-            color: #ffffff;
-        }
-
-        .btn-danger:hover {
-            background: #ff5252;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
-        }
-
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 12px;
-        }
-
-        .table-container {
-            background: #ffffff;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid #e1e8ed;
-            margin-bottom: 32px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th,
-        .table td {
-            padding: 16px 20px;
-            text-align: left;
-            border-bottom: 1px solid #f1f3f4;
-            font-size: 14px;
-        }
-
-        .table th {
-            background: #fafbfc;
-            font-weight: 600;
-            color: #2f3542;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            font-size: 12px;
-        }
-
-        .table tr:hover {
-            background: #fafbfc;
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .badge {
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-        }
-
-        .badge-success {
-            background: #e8f7f0;
-            color: #00875a;
-            border: 1px solid #c7eed8;
-        }
-
-        .badge-warning {
-            background: #fff7e6;
-            color: #b45309;
-            border: 1px solid #fdd179;
-        }
-
-        .badge-danger {
-            background: #ffebe6;
-            color: #c53030;
-            border: 1px solid #feb2a8;
-        }
-
-        .alert {
-            padding: 16px 20px;
-            border-radius: 6px;
-            margin-bottom: 24px;
-            border: 1px solid;
-            font-size: 14px;
-        }
-
-        .alert-info {
-            background: #f0f9ff;
-            border-color: #bae6fd;
-            color: #0369a1;
-        }
-
-        .alert-warning {
-            background: #fffbeb;
-            border-color: #fed7aa;
-            color: #b45309;
-        }
-
-        .notification {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            padding: 16px 20px;
-            border-radius: 6px;
-            color: #ffffff;
-            font-weight: 500;
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            background: #00d2d3;
-        }
-
-        .notification.error {
-            background: #ff6b6b;
-        }
-
-        .kaseya-config, .acronis-config {
-            background: #fafbfc;
-            border: 1px solid #e1e8ed;
-            border-radius: 6px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .model-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .model-option {
-            padding: 16px;
-            border: 1px solid #e1e8ed;
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-            background: #ffffff;
-        }
-
-        .model-option.active {
-            border-color: #00d2d3;
-            background: #f0fdff;
-        }
-
-        .model-option h4 {
-            margin-bottom: 6px;
-            color: #2f3542;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .model-option p {
-            font-size: 12px;
-            color: #747d8c;
-            margin: 0;
-        }
-
-        .kaseya-modules {
-            margin-top: 16px;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border: 1px solid #e1e8ed;
-        }
-
-        .kaseya-modules h5 {
-            margin-bottom: 12px;
-            color: #2f3542;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .kaseya-modules ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .kaseya-modules li {
-            color: #747d8c;
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-
-        h2, h3 {
-            color: #2f3542;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 20px;
-            letter-spacing: -0.025em;
-        }
-
-        h3 {
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        .text-danger {
-            color: #ff6b6b !important;
-        }
-
-        .text-success {
-            color: #00d2d3 !important;
-        }
-
-        .text-muted {
-            color: #747d8c !important;
-        }
+            background: #f5f6fa; min-height: 100vh; color: #2f3542; line-height: 1.5;
+        }
+        .container { max-width: 1400px; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; border: 1px solid #e1e8ed; }
+        .header { background: #2f3542; color: #fff; padding: 24px 32px; border-bottom: 1px solid #40475a; position: relative; }
+        .firebase-status { position: absolute; top: 16px; right: 24px; display:flex; align-items:center; gap:8px; font-size:11px; color:#a4b0be; text-transform: uppercase; letter-spacing:.5px; font-weight:500; }
+        .status-indicator { width:8px; height:8px; border-radius:50%; background-color:#00d2d3; }
+        .header h1 { font-size: 24px; margin:0; font-weight:600; letter-spacing: -0.025em; }
+        .header .subtitle { color:#a4b0be; font-size:14px; margin-top:4px; font-weight:400; }
+        .nav { background:#fff; border-bottom:1px solid #e1e8ed; }
+        .nav-tabs { display:flex; list-style:none; }
+        .nav-tabs li { flex:1; }
+        .nav-tabs button { width:100%; padding:16px 24px; background:none; border:none; cursor:pointer; font-size:14px; font-weight:500; color:#747d8c; transition: .2s; border-bottom:2px solid transparent; text-transform: uppercase; letter-spacing:.025em; font-family:inherit; }
+        .nav-tabs button.active { color:#2f3542; border-bottom-color:#00d2d3; background:#fff; }
+        .nav-tabs button:hover { color:#2f3542; background:#f8f9fa; }
+        .tab-content { padding:32px; }
+        .tab-pane { display:none; }
+        .tab-pane.active { display:block; }
+        .stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:24px; margin-bottom:32px; }
+        .stat-card { background:#fff; border:1px solid #e1e8ed; padding:24px; border-radius:6px; transition:.2s; text-align:center; }
+        .stat-card:hover { border-color:#c7d2fe; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+        .stat-number { font-size:28px; font-weight:700; color:#2f3542; display:block; margin-bottom:4px; }
+        .stat-label { color:#747d8c; font-size:13px; font-weight:500; text-transform: uppercase; letter-spacing:.5px; }
+        .inventory-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:24px; margin-bottom:32px; }
+        .inventory-card { background:#fff; border:1px solid #e1e8ed; border-radius:6px; padding:24px; transition:.2s; }
+        .inventory-card:hover { border-color:#c7d2fe; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+        .inventory-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+        .inventory-title { font-weight:600; color:#2f3542; font-size:15px; }
+        .inventory-progress{ width:100%; height:8px; background:#f1f3f4; border-radius:4px; overflow:hidden; margin-bottom:12px; }
+        .inventory-progress-bar{ height:100%; background:#00d2d3; transition:width .3s; border-radius:4px; }
+        .inventory-details{ display:flex; justify-content:space-between; font-size:13px; color:#747d8c; font-weight:500; }
+        .form-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:24px; margin-bottom:24px; }
+        .form-group{ margin-bottom:20px; }
+        .form-group label{ display:block; margin-bottom:6px; font-weight:500; color:#2f3542; font-size:13px; text-transform: uppercase; letter-spacing:.025em; }
+        .form-control{ width:100%; padding:12px 16px; border:1px solid #e1e8ed; border-radius:6px; font-size:14px; font-family:inherit; transition:.2s; background:#fff; color:#2f3542; }
+        .form-control:focus{ outline:none; border-color:#00d2d3; box-shadow:0 0 0 3px rgba(0,210,211,.1); }
+        .btn{ padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:500; transition:.2s; text-decoration:none; display:inline-block; text-align:center; text-transform: uppercase; letter-spacing:.025em; font-family:inherit; }
+        .btn-primary{ background:#2f3542; color:#fff; }
+        .btn-primary:hover{ background:#40475a; transform: translateY(-1px); box-shadow:0 4px 12px rgba(47,53,66,.2); }
+        .btn-success{ background:#00d2d3; color:#fff; }
+        .btn-success:hover{ background:#00b8b9; transform: translateY(-1px); box-shadow:0 4px 12px rgba(0,210,211,.2); }
+        .btn-warning{ background:#ff9f43; color:#fff; }
+        .btn-warning:hover{ background:#ff8c1a; transform: translateY(-1px); box-shadow:0 4px 12px rgba(255,159,67,.2); }
+        .btn-danger{ background:#ff6b6b; color:#fff; }
+        .btn-danger:hover{ background:#ff5252; transform: translateY(-1px); box-shadow:0 4px 12px rgba(255,107,107,.2); }
+        .btn-small{ padding:8px 16px; font-size:12px; }
+        .btn-ghost{ background:transparent; border:1px solid #e1e8ed; color:#2f3542; }
+        .btn-ghost:hover{ background:#f8f9fa; }
+        .table-container{ background:#fff; border-radius:6px; overflow:hidden; border:1px solid #e1e8ed; margin-bottom:32px; }
+        .table{ width:100%; border-collapse: collapse; }
+        .table th, .table td{ padding:16px 20px; text-align:left; border-bottom:1px solid #f1f3f4; font-size:14px; }
+        .table th{ background:#fafbfc; font-weight:600; color:#2f3542; text-transform: uppercase; letter-spacing:.025em; font-size:12px; }
+        .table tr:hover{ background:#fafbfc; }
+        .table tr:last-child td{ border-bottom:none; }
+        .badge{ padding:4px 12px; border-radius:16px; font-size:11px; font-weight:600; text-transform: uppercase; letter-spacing:.025em; }
+        .badge-success{ background:#e8f7f0; color:#00875a; border:1px solid #c7eed8; }
+        .badge-warning{ background:#fff7e6; color:#b45309; border:1px solid #fdd179; }
+        .badge-danger{ background:#ffebe6; color:#c53030; border:1px solid #feb2a8; }
+        .alert{ padding:16px 20px; border-radius:6px; margin-bottom:24px; border:1px solid; font-size:14px; }
+        .alert-info{ background:#f0f9ff; border-color:#bae6fd; color:#0369a1; }
+        .alert-warning{ background:#fffbeb; border-color:#fed7aa; color:#b45309; }
+        .notification{ position:fixed; top:24px; right:24px; padding:16px 20px; border-radius:6px; color:#fff; font-weight:500; z-index:1000; transform: translateX(400px); transition: transform .3s; font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+        .notification.show{ transform: translateX(0); }
+        .notification.success{ background:#00d2d3; }
+        .notification.error{ background:#ff6b6b; }
+        .kaseya-config, .acronis-config { background:#fafbfc; border:1px solid #e1e8ed; border-radius:6px; padding:24px; margin-bottom:24px; }
+        .model-selector{ display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:20px; }
+        .model-option{ padding:16px; border:1px solid #e1e8ed; border-radius:6px; cursor:pointer; text-align:center; transition:.2s; background:#fff; }
+        .model-option.active{ border-color:#00d2d3; background:#f0fdff; }
+        .model-option h4{ margin-bottom:6px; color:#2f3542; font-size:14px; font-weight:600; }
+        .model-option p{ font-size:12px; color:#747d8c; margin:0; }
+        .kaseya-modules{ margin-top:16px; padding:16px; background:#f8f9fa; border-radius:6px; border:1px solid #e1e8ed; }
+        .kaseya-modules h5{ margin-bottom:12px; color:#2f3542; font-size:13px; font-weight:600; }
+        .kaseya-modules ul{ margin:0; padding-left:20px; }
+        .kaseya-modules li{ color:#747d8c; font-size:12px; margin-bottom:4px; }
+        h2, h3 { color:#2f3542; font-weight:600; margin-bottom:20px; }
+        h2{ font-size:20px; letter-spacing:-0.025em; }
+        h3{ font-size:14px; text-transform: uppercase; letter-spacing:.025em; margin-bottom:16px; }
+        .text-danger{ color:#ff6b6b !important; }
+        .text-success{ color:#00d2d3 !important; }
+        .text-muted{ color:#747d8c !important; }
+        .row-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+        .inline-actions{ display:flex; gap:8px; flex-wrap:wrap; }
 
         @media (max-width: 768px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                border: none;
-            }
-
-            .header {
-                padding: 20px 16px;
-            }
-
-            .firebase-status {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin-bottom: 12px;
-                justify-content: center;
-            }
-
-            .header h1 {
-                font-size: 20px;
-                text-align: center;
-            }
-
-            .header .subtitle {
-                text-align: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .nav-tabs {
-                flex-direction: column;
-            }
-
-            .nav-tabs button {
-                border-bottom: 1px solid #e1e8ed;
-                border-right: none;
-            }
-
-            .nav-tabs button.active {
-                border-bottom-color: #00d2d3;
-            }
-
-            .tab-content {
-                padding: 20px 16px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .inventory-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .model-selector {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .table-container {
-                overflow-x: auto;
-            }
-
-            .table {
-                min-width: 600px;
-            }
-
-            .table th,
-            .table td {
-                padding: 12px 16px;
-                font-size: 13px;
-            }
-
-            .btn {
-                width: 100%;
-                margin-bottom: 8px;
-            }
-
-            .btn-small {
-                width: auto;
-                margin-bottom: 0;
-                margin-right: 8px;
-            }
+            .container{ margin:0; border-radius:0; border:none; }
+            .header{ padding:20px 16px; }
+            .firebase-status{ position:relative; top:auto; right:auto; margin-bottom:12px; justify-content:center; }
+            .header h1{ font-size:20px; text-align:center; }
+            .header .subtitle{ text-align:center; }
+            .stats-grid{ grid-template-columns:1fr; gap:16px; }
+            .nav-tabs{ flex-direction: column; }
+            .nav-tabs button{ border-bottom:1px solid #e1e8ed; border-right:none; }
+            .nav-tabs button.active{ border-bottom-color:#00d2d3; }
+            .tab-content{ padding:20px 16px; }
+            .form-grid{ grid-template-columns:1fr; gap:16px; }
+            .inventory-grid{ grid-template-columns:1fr; gap:16px; }
+            .model-selector{ grid-template-columns:1fr; gap:12px; }
+            .table-container{ overflow-x:auto; }
+            .table{ min-width: 600px; }
+            .table th, .table td{ padding:12px 16px; font-size:13px; }
+            .btn{ width:100%; margin-bottom:8px; }
+            .btn-small{ width:auto; margin-bottom:0; margin-right:8px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="firebase-status">
-                <div class="status-indicator"></div>
-                <span>Sistema Ativo</span>
+<div class="container">
+    <div class="header">
+        <div class="firebase-status">
+            <div class="status-indicator"></div>
+            <span>Sistema Ativo</span>
+        </div>
+        <h1>Sistema de Controle de Licenças</h1>
+        <p class="subtitle">Gerenciamento corporativo de licenças e inventário</p>
+    </div>
+
+    <nav class="nav">
+        <ul class="nav-tabs">
+            <li><button class="active" onclick="showTab('dashboard')">Dashboard</button></li>
+            <li><button onclick="showTab('inventory')">Inventário</button></li>
+            <li><button onclick="showTab('clients')">Clientes</button></li>
+            <li><button onclick="showTab('licenses')">Licenças</button></li>
+            <li><button onclick="showTab('reports')">Relatórios</button></li>
+        </ul>
+    </nav>
+
+    <div class="tab-content">
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="tab-pane active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalClients">0</span>
+                    <div class="stat-label">Total de Clientes</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="totalLicenses">0</span>
+                    <div class="stat-label">Total de Licenças</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="activeLicenses">0</span>
+                    <div class="stat-label">Licenças Ativas</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="expiringLicenses">0</span>
+                    <div class="stat-label">Expirando (30 dias)</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="totalMonthlyCost">R$ 0,00</span>
+                    <div class="stat-label">Custo Total Mensal</div>
+                </div>
             </div>
-            <h1>Sistema de Controle de Licenças</h1>
-            <p class="subtitle">Gerenciamento corporativo de licenças e inventário</p>
+
+            <h3>Resumo do Inventário</h3>
+            <div class="inventory-grid" id="inventorySummary"></div>
+
+            <div id="alertsContainer"></div>
+
+            <div class="table-container">
+                <h3 style="padding: 20px 20px 0; color:#2f3542;">Licenças por Vencimento</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Software</th>
+                            <th>Quantidade</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardTable"></tbody>
+                </table>
+            </div>
         </div>
 
-        <nav class="nav">
-            <ul class="nav-tabs">
-                <li><button class="active" onclick="showTab('dashboard')">Dashboard</button></li>
-                <li><button onclick="showTab('inventory')">Inventário</button></li>
-                <li><button onclick="showTab('clients')">Clientes</button></li>
-                <li><button onclick="showTab('licenses')">Licenças</button></li>
-                <li><button onclick="showTab('reports')">Relatórios</button></li>
-            </ul>
-        </nav>
+        <!-- INVENTÁRIO -->
+        <div id="inventory" class="tab-pane">
+            <h2>Controle de Inventário de Licenças</h2>
 
-        <div class="tab-content">
-            <!-- Dashboard -->
-            <div id="dashboard" class="tab-pane active">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" id="totalClients">0</span>
-                        <div class="stat-label">Total de Clientes</div>
+            <div class="alert alert-info">
+                <strong>Informação:</strong> Agora é possível cadastrar <strong>lotes do fornecedor (MSP)</strong> com <em>tipo</em>, <em>quantidade</em> e <em>vigência</em>. Os totais exibidos nos cards consideram apenas lotes <strong>ativos</strong>.
+            </div>
+
+            <!-- NOVO: Cadastro de Lotes do Fornecedor -->
+            <h3>Lotes do Fornecedor (MSP)</h3>
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select id="batchType" class="form-control">
+                            <option value="">Selecione o tipo</option>
+                            <option value="bitdefender">BitDefender</option>
+                            <option value="kaseyaEndpoint">Kaseya 365 Endpoint</option>
+                            <option value="kaseyaEndpointPro">Kaseya 365 Endpoint Pro</option>
+                            <option value="kaseyaUser">Kaseya 365 User</option>
+                        </select>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="totalLicenses">0</span>
-                        <div class="stat-label">Total de Licenças</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="activeLicenses">0</span>
-                        <div class="stat-label">Licenças Ativas</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="expiringLicenses">0</span>
-                        <div class="stat-label">Expirando (30 dias)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="totalMonthlyCost">R$ 0,00</span>
-                        <div class="stat-label">Custo Total Mensal</div>
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="number" id="batchQuantity" class="form-control" placeholder="Ex: 75" min="1" />
                     </div>
                 </div>
-
-                <!-- Inventário Resumo -->
-                <h3>Resumo do Inventário</h3>
-                <div class="inventory-grid" id="inventorySummary">
-                    <!-- Será preenchido dinamicamente -->
+                <div>
+                    <div class="form-group">
+                        <label>Data de Início</label>
+                        <input type="date" id="batchStartDate" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Fim</label>
+                        <input type="date" id="batchEndDate" class="form-control" />
+                    </div>
                 </div>
+            </div>
+            <div class="inline-actions" style="margin-bottom: 12px;">
+                <button class="btn btn-primary" id="batchSaveBtn" onclick="saveInventoryBatch()">Adicionar Lote</button>
+                <button class="btn btn-ghost" id="batchCancelBtn" onclick="cancelEditBatch()" style="display:none;">Cancelar edição</button>
+            </div>
 
-                <!-- Alertas -->
-                <div id="alertsContainer"></div>
+            <div class="table-container" style="margin-top: 10px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Quantidade</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBatchesTable"></tbody>
+                </table>
+            </div>
 
-                <!-- Tabela resumo -->
-                <div class="table-container">
-                    <h3 style="padding: 20px 20px 0; color: #2f3542;">Licenças por Vencimento</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Software</th>
-                                <th>Quantidade</th>
-                                <th>Vencimento</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboardTable">
-                        </tbody>
-                    </table>
+            <!-- Seção original de totais (mantida) -->
+            <h3>Status Atual do Inventário</h3>
+            <div class="inventory-grid" id="inventoryDetails"></div>
+        </div>
+
+        <!-- CLIENTES -->
+        <div id="clients" class="tab-pane">
+            <h2>Gerenciar Clientes</h2>
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Nome do Cliente</label>
+                        <input type="text" id="clientName" class="form-control" placeholder="Nome completo" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="clientEmail" class="form-control" placeholder="email@exemplo.com" />
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="tel" id="clientPhone" class="form-control" placeholder="(11) 99999-9999" />
+                    </div>
+                    <div class="inline-actions">
+                        <button class="btn btn-primary" id="clientSaveBtn" onclick="addClient()">Adicionar Cliente</button>
+                        <button class="btn btn-ghost" id="clientCancelBtn" onclick="cancelEditClient()" style="display:none;">Cancelar edição</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Inventário -->
-            <div id="inventory" class="tab-pane">
-                <h2>Controle de Inventário de Licenças</h2>
-                
-                <div class="alert alert-info">
-                    <strong>Informação:</strong> Configure aqui a quantidade total de licenças que você possui vs. as que estão sendo utilizadas pelos clientes.
-                </div>
+            <div class="table-container" style="margin-top: 30px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>Licenças</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTable"></tbody>
+                </table>
+            </div>
+        </div>
 
-                <div class="form-grid">
-                    <div>
-                        <h3>BitDefender</h3>
-                        <div class="form-group">
-                            <label>Total de Licenças Compradas:</label>
-                            <input type="number" id="bitdefenderTotal" class="form-control" placeholder="Ex: 100">
-                        </div>
-                        <button class="btn btn-primary" onclick="updateInventory('bitdefender')">Atualizar BitDefender</button>
+        <!-- LICENÇAS -->
+        <div id="licenses" class="tab-pane">
+            <h2>Gerenciar Licenças</h2>
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <select id="licenseClient" class="form-control">
+                            <option value="">Selecione um cliente</option>
+                        </select>
                     </div>
-                    <div>
-                        <h3>Kaseya Endpoint</h3>
-                        <div class="form-group">
-                            <label>Total de Licenças Compradas:</label>
-                            <input type="number" id="kaseyaEndpointTotal" class="form-control" placeholder="Ex: 50">
-                        </div>
-                        <button class="btn btn-primary" onclick="updateInventory('kaseyaEndpoint')">Atualizar Kaseya Endpoint</button>
+                    <div class="form-group">
+                        <label>Software</label>
+                        <select id="licenseSoftware" class="form-control" onchange="showSoftwareConfig()">
+                            <option value="">Selecione o software</option>
+                            <option value="BitDefender">BitDefender</option>
+                            <option value="Kaseya">Kaseya</option>
+                            <option value="Acronis">Acronis (Backup)</option>
+                        </select>
                     </div>
-                    <div>
-                        <h3>Kaseya Endpoint Pro</h3>
-                        <div class="form-group">
-                            <label>Total de Licenças Compradas:</label>
-                            <input type="number" id="kaseyaEndpointProTotal" class="form-control" placeholder="Ex: 30">
-                        </div>
-                        <button class="btn btn-primary" onclick="updateInventory('kaseyaEndpointPro')">Atualizar Kaseya Endpoint Pro</button>
-                    </div>
-                    <div>
-                        <h3>Kaseya User</h3>
-                        <div class="form-group">
-                            <label>Total de Licenças Compradas:</label>
-                            <input type="number" id="kaseyaUserTotal" class="form-control" placeholder="Ex: 20">
-                        </div>
-                        <button class="btn btn-primary" onclick="updateInventory('kaseyaUser')">Atualizar Kaseya User</button>
+                    <div class="form-group" id="quantityGroup">
+                        <label>Quantidade</label>
+                        <input type="number" id="licenseQuantity" class="form-control" placeholder="Ex: 5" min="1" value="1" />
                     </div>
                 </div>
-
-                <h3>Status Atual do Inventário</h3>
-                <div class="inventory-grid" id="inventoryDetails">
-                    <!-- Será preenchido dinamicamente -->
+                <div>
+                    <div class="form-group">
+                        <label>Data de Início</label>
+                        <input type="date" id="licenseStartDate" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Fim</label>
+                        <input type="date" id="licenseEndDate" class="form-control" />
+                    </div>
                 </div>
             </div>
 
-            <!-- Clientes -->
-            <div id="clients" class="tab-pane">
-                <h2>Gerenciar Clientes</h2>
-                
-                <div class="form-grid">
-                    <div>
-                        <div class="form-group">
-                            <label>Nome do Cliente:</label>
-                            <input type="text" id="clientName" class="form-control" placeholder="Nome completo">
-                        </div>
-                        <div class="form-group">
-                            <label>Email:</label>
-                            <input type="email" id="clientEmail" class="form-control" placeholder="email@exemplo.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Telefone:</label>
-                            <input type="tel" id="clientPhone" class="form-control" placeholder="(11) 99999-9999">
-                        </div>
-                        <button class="btn btn-primary" onclick="addClient()">Adicionar Cliente</button>
+            <!-- Config Kaseya -->
+            <div id="kaseyaConfig" class="kaseya-config" style="display:none;">
+                <h4 style="margin-bottom: 15px; color:#2f3542;">Configuração Kaseya</h4>
+                <div class="model-selector">
+                    <div class="model-option" onclick="selectKaseyaType('endpoint')" id="kaseyaEndpoint">
+                        <h4>Kaseya 365 Endpoint</h4>
+                        <p>5 módulos inclusos</p>
+                    </div>
+                    <div class="model-option" onclick="selectKaseyaType('endpointPro')" id="kaseyaEndpointPro">
+                        <h4>Kaseya 365 Endpoint Pro</h4>
+                        <p>6 módulos inclusos</p>
+                    </div>
+                    <div class="model-option" onclick="selectKaseyaType('user')" id="kaseyaUser">
+                        <h4>Kaseya 365 User</h4>
+                        <p>5 módulos inclusos</p>
                     </div>
                 </div>
-
-                <div class="table-container" style="margin-top: 30px;">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Telefone</th>
-                                <th>Licenças</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="clientsTable">
-                        </tbody>
-                    </table>
+                <div class="kaseya-modules" id="kaseyaModules">
+                    <h5>Módulos inclusos:</h5>
+                    <ul id="kaseyaModulesList">
+                        <li>Unified RMM</li>
+                        <li>Advanced Software Management</li>
+                        <li>Endpoint Backup</li>
+                        <li>Anti-Virus</li>
+                        <li>Endpoint Detection and Response</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Licenças -->
-            <div id="licenses" class="tab-pane">
-                <h2>Gerenciar Licenças</h2>
-                
-                <div class="form-grid">
-                    <div>
-                        <div class="form-group">
-                            <label>Cliente:</label>
-                            <select id="licenseClient" class="form-control">
-                                <option value="">Selecione um cliente</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Software:</label>
-                            <select id="licenseSoftware" class="form-control" onchange="showSoftwareConfig()">
-                                <option value="">Selecione o software</option>
-                                <option value="BitDefender">BitDefender</option>
-                                <option value="Kaseya">Kaseya</option>
-                                <option value="Acronis">Acronis (Backup)</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="quantityGroup">
-                            <label>Quantidade:</label>
-                            <input type="number" id="licenseQuantity" class="form-control" placeholder="Ex: 5" min="1" value="1">
-                        </div>
+            <!-- Config Acronis -->
+            <div id="acronisConfig" class="acronis-config" style="display:none;">
+                <h4 style="margin-bottom: 15px; color:#2f3542;">Configuração Acronis</h4>
+                <div class="model-selector">
+                    <div class="model-option" onclick="selectAcronisModel('workload')" id="workloadModel">
+                        <h4>Per-Workload</h4>
+                        <p>Cobrança por dispositivo protegido</p>
                     </div>
-                    <div>
-                        <div class="form-group">
-                            <label>Data de Início:</label>
-                            <input type="date" id="licenseStartDate" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Data de Fim:</label>
-                            <input type="date" id="licenseEndDate" class="form-control">
-                        </div>
+                    <div class="model-option" onclick="selectAcronisModel('storage')" id="storageModel">
+                        <h4>Per-GB</h4>
+                        <p>Cobrança por armazenamento usado</p>
                     </div>
                 </div>
-
-                <!-- Configuração específica do Kaseya -->
-                <div id="kaseyaConfig" class="kaseya-config" style="display: none;">
-                    <h4 style="margin-bottom: 15px; color: #2f3542;">Configuração Kaseya</h4>
-                    <div class="model-selector">
-                        <div class="model-option active" onclick="selectKaseyaType('endpoint')" id="kaseyaEndpoint">
-                            <h4>Kaseya 365 Endpoint</h4>
-                            <p>5 módulos inclusos</p>
-                        </div>
-                        <div class="model-option" onclick="selectKaseyaType('endpointPro')" id="kaseyaEndpointPro">
-                            <h4>Kaseya 365 Endpoint Pro</h4>
-                            <p>6 módulos inclusos</p>
-                        </div>
-                        <div class="model-option" onclick="selectKaseyaType('user')" id="kaseyaUser">
-                            <h4>Kaseya 365 User</h4>
-                            <p>5 módulos inclusos</p>
-                        </div>
+                <div id="acronisFields">
+                    <div class="form-group">
+                        <label>Número de Dispositivos</label>
+                        <input type="number" id="acronisDevices" class="form-control" placeholder="Quantos dispositivos" />
                     </div>
-                    <div class="kaseya-modules" id="kaseyaModules">
-                        <h5>Módulos inclusos:</h5>
-                        <ul id="kaseyaModulesList">
-                            <li>Unified RMM</li>
-                            <li>Advanced Software Management</li>
-                            <li>Endpoint Backup</li>
-                            <li>Anti-Virus</li>
-                            <li>Endpoint Detection and Response</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Configuração específica do Acronis -->
-                <div id="acronisConfig" class="acronis-config" style="display: none;">
-                    <h4 style="margin-bottom: 15px; color: #2f3542;">Configuração Acronis</h4>
-                    <div class="model-selector">
-                        <div class="model-option active" onclick="selectAcronisModel('workload')" id="workloadModel">
-                            <h4>Per-Workload</h4>
-                            <p>Cobrança por dispositivo protegido</p>
-                        </div>
-                        <div class="model-option" onclick="selectAcronisModel('storage')" id="storageModel">
-                            <h4>Per-GB</h4>
-                            <p>Cobrança por armazenamento usado</p>
-                        </div>
-                    </div>
-                    <div id="acronisFields">
-                        <div class="form-group">
-                            <label>Número de Dispositivos:</label>
-                            <input type="number" id="acronisDevices" class="form-control" placeholder="Quantos dispositivos">
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn btn-primary" onclick="addLicense()">Adicionar Licença</button>
-
-                <div class="table-container" style="margin-top: 30px;">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Software</th>
-                                <th>Tipo/Detalhes</th>
-                                <th>Quantidade</th>
-                                <th>Início</th>
-                                <th>Fim</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="licensesTable">
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
-            <!-- Relatórios -->
-            <div id="reports" class="tab-pane">
-                <h2>Relatórios Financeiros</h2>
-                
-                <!-- Configuração de Preços -->
-                <div class="table-container" style="margin-bottom: 30px;">
-                    <h3 style="padding: 20px 20px 10px; color: #2f3542;">Configuração de Preços</h3>
-                    <div style="padding: 0 20px 20px;">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>BitDefender (R$/mês):</label>
-                                <input type="number" step="0.01" id="bitdefenderPrice" class="form-control" value="98.64">
-                            </div>
-                            <div class="form-group">
-                                <label>Kaseya 365 Endpoint (R$/mês):</label>
-                                <input type="number" step="0.01" id="kaseyaEndpointPrice" class="form-control" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label>Kaseya 365 Endpoint Pro (R$/mês):</label>
-                                <input type="number" step="0.01" id="kaseyaEndpointProPrice" class="form-control" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label>Kaseya 365 User (R$/mês):</label>
-                                <input type="number" step="0.01" id="kaseyaUserPrice" class="form-control" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label>Acronis Per-Workload (R$/mês):</label>
-                                <input type="number" step="0.01" id="acronisWorkloadPrice" class="form-control" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label>Acronis Per-GB (R$/GB/mês):</label>
-                                <input type="number" step="0.01" id="acronisStoragePrice" class="form-control" value="0">
-                            </div>
+            <div class="inline-actions" style="margin-bottom: 12px;">
+                <button class="btn btn-primary" id="licenseSaveBtn" onclick="addLicense()">Adicionar Licença</button>
+                <button class="btn btn-ghost" id="licenseCancelBtn" onclick="cancelEditLicense()" style="display:none;">Cancelar edição</button>
+            </div>
+
+            <div class="table-container" style="margin-top: 10px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Software</th>
+                            <th>Tipo/Detalhes</th>
+                            <th>Quantidade</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="licensesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RELATÓRIOS -->
+        <div id="reports" class="tab-pane">
+            <h2>Relatórios Financeiros</h2>
+
+            <div class="table-container" style="margin-bottom: 30px;">
+                <h3 style="padding: 20px 20px 10px; color:#2f3542;">Configuração de Preços</h3>
+                <div style="padding: 0 20px 20px;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>BitDefender (R$/mês)</label>
+                            <input type="number" step="0.01" id="bitdefenderPrice" class="form-control" value="98.64" />
                         </div>
-                        <button class="btn btn-success" onclick="savePrices()">Salvar Preços</button>
+                        <div class="form-group">
+                            <label>Kaseya 365 Endpoint (R$/mês)</label>
+                            <input type="number" step="0.01" id="kaseyaEndpointPrice" class="form-control" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Kaseya 365 Endpoint Pro (R$/mês)</label>
+                            <input type="number" step="0.01" id="kaseyaEndpointProPrice" class="form-control" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Kaseya 365 User (R$/mês)</label>
+                            <input type="number" step="0.01" id="kaseyaUserPrice" class="form-control" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Acronis Per-Workload (R$/mês)</label>
+                            <input type="number" step="0.01" id="acronisWorkloadPrice" class="form-control" value="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Acronis Per-GB (R$/GB/mês)</label>
+                            <input type="number" step="0.01" id="acronisStoragePrice" class="form-control" value="0" />
+                        </div>
                     </div>
+                    <button class="btn btn-success" onclick="savePrices()">Salvar Preços</button>
                 </div>
+            </div>
 
-                <!-- Resumo Financeiro -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" id="monthlyRevenue">R$ 0,00</span>
-                        <div class="stat-label">Receita Mensal</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="annualRevenue">R$ 0,00</span>
-                        <div class="stat-label">Receita Anual</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="avgPerClient">R$ 0,00</span>
-                        <div class="stat-label">Média por Cliente</div>
-                    </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="monthlyRevenue">R$ 0,00</span>
+                    <div class="stat-label">Receita Mensal</div>
                 </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="annualRevenue">R$ 0,00</span>
+                    <div class="stat-label">Receita Anual</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="avgPerClient">R$ 0,00</span>
+                    <div class="stat-label">Média por Cliente</div>
+                </div>
+            </div>
 
-                <!-- Relatório por Cliente -->
-                <div class="table-container">
-                    <h3 style="padding: 20px 20px 0; color: #2f3542;">Relatório por Cliente</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>BitDefender</th>
-                                <th>Kaseya Endpoint</th>
-                                <th>Kaseya Endpoint Pro</th>
-                                <th>Kaseya User</th>
-                                <th>Acronis</th>
-                                <th>Total Mensal</th>
-                                <th>Total Anual</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reportsTable">
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-container">
+                <h3 style="padding: 20px 20px 0; color:#2f3542;">Relatório por Cliente</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>BitDefender</th>
+                            <th>Kaseya Endpoint</th>
+                            <th>Kaseya Endpoint Pro</th>
+                            <th>Kaseya User</th>
+                            <th>Acronis</th>
+                            <th>Total Mensal</th>
+                            <th>Total Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTable"></tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
+<div id="notification" class="notification"></div>
 
-    <script>
-        // Dados simulados (usando localStorage para persistência)
-        window.clients = [];
-        window.licenses = [];
-        window.inventory = {
-            bitdefender: { total: 0, used: 0 },
-            kaseyaEndpoint: { total: 0, used: 0 },
-            kaseyaEndpointPro: { total: 0, used: 0 },
-            kaseyaUser: { total: 0, used: 0 }
-        };
-        window.prices = {
-            bitdefender: 98.64,
-            kaseyaEndpoint: 0,
-            kaseyaEndpointPro: 0,
-            kaseyaUser: 0,
-            acronisWorkload: 0,
-            acronisStorage: 0
-        };
+<script>
+// ====== ESTADO GLOBAL ======
+window.clients = [];
+window.licenses = [];
+window.inventory = {
+    bitdefender: { total: 0, used: 0 },
+    kaseyaEndpoint: { total: 0, used: 0 },
+    kaseyaEndpointPro: { total: 0, used: 0 },
+    kaseyaUser: { total: 0, used: 0 }
+};
+window.prices = {
+    bitdefender: 98.64,
+    kaseyaEndpoint: 0,
+    kaseyaEndpointPro: 0,
+    kaseyaUser: 0,
+    acronisWorkload: 0,
+    acronisStorage: 0
+};
+// NOVO: lotes do fornecedor (MSP)
+window.inventoryBatches = []; // { id, type, quantity, startDate, endDate, createdAt }
 
-        // Definições dos módulos Kaseya
-        window.kaseyaModules = {
-            endpoint: [
-                'Unified RMM',
-                'Advanced Software Management', 
-                'Endpoint Backup',
-                'Anti-Virus',
-                'Endpoint Detection and Response'
-            ],
-            endpointPro: [
-                'Unified RMM',
-                'Advanced Software Management',
-                'Endpoint Backup', 
-                'Anti-Virus',
-                'Endpoint Detection and Response',
-                'Managed Detection and Response'
-            ],
-            user: [
-                'SaaS Backup',
-                'Security Awareness Training',
-                'Anti-Phishing Software',
-                'Cloud Detection and Response',
-                'Dark Web Monitoring'
-            ]
-        };
+// flags de edição
+window.editingClientId = null;
+window.editingLicenseId = null;
+window.editingBatchId = null;
 
-        // Carregar dados do localStorage
-        function loadData() {
-            try {
-                // Carregar preços
-                const savedPrices = localStorage.getItem('prices');
-                if (savedPrices) {
-                    window.prices = Object.assign(window.prices, JSON.parse(savedPrices));
-                    updatePriceInputs();
-                }
+// Kaseya módulos
+window.kaseyaModules = {
+    endpoint: [ 'Unified RMM','Advanced Software Management','Endpoint Backup','Anti-Virus','Endpoint Detection and Response' ],
+    endpointPro: [ 'Unified RMM','Advanced Software Management','Endpoint Backup','Anti-Virus','Endpoint Detection and Response','Managed Detection and Response' ],
+    user: [ 'SaaS Backup','Security Awareness Training','Anti-Phishing Software','Cloud Detection and Response','Dark Web Monitoring' ]
+};
 
-                // Carregar inventário
-                const savedInventory = localStorage.getItem('inventory');
-                if (savedInventory) {
-                    window.inventory = Object.assign(window.inventory, JSON.parse(savedInventory));
-                    updateInventoryInputs();
-                }
+// ====== UTIL ======
+function showNotification(message, type='success'){
+    const n = document.getElementById('notification');
+    n.textContent = message; n.className = `notification ${type}`; n.classList.add('show');
+    setTimeout(()=> n.classList.remove('show'), 3000);
+}
+function formatDate(dateString){
+    const date = new Date(dateString); return isNaN(date) ? '-' : date.toLocaleDateString('pt-BR');
+}
+function formatCurrency(value){
+    return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value||0);
+}
+function getKaseyaTypeLabel(type){
+    const labels = { endpoint: 'Kaseya 365 Endpoint', endpointPro: 'Kaseya 365 Endpoint Pro', user: 'Kaseya 365 User' };
+    return labels[type] || type;
+}
+function daysBetween(a,b){ const MS=1000*60*60*24; return Math.ceil((b - a)/MS); }
 
-                // Carregar clientes
-                const savedClients = localStorage.getItem('clients');
-                if (savedClients) {
-                    window.clients = JSON.parse(savedClients);
-                }
+// ====== NAVEGAÇÃO ======
+function showTab(tabName){
+    document.querySelectorAll('.tab-pane').forEach(tab=> tab.classList.remove('active'));
+    document.querySelectorAll('.nav-tabs button').forEach(btn=> btn.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
+    if (tabName==='dashboard') updateDashboard();
+    else if (tabName==='inventory'){ updateInventoryDisplay(); renderInventoryBatchesTable(); }
+    else if (tabName==='clients'){ updateClientsTable(); }
+    else if (tabName==='licenses'){ updateLicensesTable(); updateClientSelect(); }
+    else if (tabName==='reports'){ updateReportsTable(); }
+}
 
-                // Carregar licenças
-                const savedLicenses = localStorage.getItem('licenses');
-                if (savedLicenses) {
-                    window.licenses = JSON.parse(savedLicenses);
-                }
+// ====== CARREGAMENTO ======
+function loadData(){
+    try {
+        const savedPrices = localStorage.getItem('prices');
+        if (savedPrices) { window.prices = Object.assign(window.prices, JSON.parse(savedPrices)); updatePriceInputs(); }
+        const savedInventory = localStorage.getItem('inventory');
+        if (savedInventory) { window.inventory = Object.assign(window.inventory, JSON.parse(savedInventory)); }
+        const savedClients = localStorage.getItem('clients');
+        if (savedClients) { window.clients = JSON.parse(savedClients); }
+        const savedLicenses = localStorage.getItem('licenses');
+        if (savedLicenses) { window.licenses = JSON.parse(savedLicenses); }
+        const savedBatches = localStorage.getItem('inventoryBatches');
+        if (savedBatches) { window.inventoryBatches = JSON.parse(savedBatches); }
+        // recalcular totais a partir dos lotes ativos
+        recalcInventoryFromBatches();
+        updateInventoryUsed();
+        // render
+        updateDashboard();
+        updateInventoryDisplay();
+        updateClientsTable();
+        updateLicensesTable();
+        updateReportsTable();
+        updateClientSelect();
+        renderInventoryBatchesTable();
+    } catch (e){ console.error('Erro ao carregar dados', e); }
+}
 
-                // Atualizar inventário usado
-                updateInventoryUsed();
-                
-                // Atualizar todas as tabelas
-                updateDashboard();
-                updateInventoryDisplay();
-                updateClientsTable();
-                updateLicensesTable();
-                updateReportsTable();
-                updateClientSelect();
-                
-            } catch (error) {
-                console.error('Erro ao carregar dados:', error);
+// ====== PREÇOS ======
+function updatePriceInputs(){
+    document.getElementById('bitdefenderPrice').value = window.prices.bitdefender;
+    document.getElementById('kaseyaEndpointPrice').value = window.prices.kaseyaEndpoint;
+    document.getElementById('kaseyaEndpointProPrice').value = window.prices.kaseyaEndpointPro;
+    document.getElementById('kaseyaUserPrice').value = window.prices.kaseyaUser;
+    document.getElementById('acronisWorkloadPrice').value = window.prices.acronisWorkload;
+    document.getElementById('acronisStoragePrice').value = window.prices.acronisStorage;
+}
+function savePrices(){
+    window.prices.bitdefender = parseFloat(document.getElementById('bitdefenderPrice').value)||0;
+    window.prices.kaseyaEndpoint = parseFloat(document.getElementById('kaseyaEndpointPrice').value)||0;
+    window.prices.kaseyaEndpointPro = parseFloat(document.getElementById('kaseyaEndpointProPrice').value)||0;
+    window.prices.kaseyaUser = parseFloat(document.getElementById('kaseyaUserPrice').value)||0;
+    window.prices.acronisWorkload = parseFloat(document.getElementById('acronisWorkloadPrice').value)||0;
+    window.prices.acronisStorage = parseFloat(document.getElementById('acronisStoragePrice').value)||0;
+    localStorage.setItem('prices', JSON.stringify(window.prices));
+    updateReportsTable(); updateDashboard();
+    showNotification('Preços salvos com sucesso!');
+}
+
+// ====== INVENTÁRIO (USO) ======
+function updateInventoryInputs(){ /* mantido para compatibilidade de UI antiga, se necessário */ }
+function batchIsActive(batch){
+    const today = new Date(); const s = new Date(batch.startDate); const e = new Date(batch.endDate);
+    if (isNaN(s) || isNaN(e)) return false; // dados inválidos não contam
+    return s <= today && e >= today;
+}
+function recalcInventoryFromBatches(){
+    // zera totais
+    window.inventory.bitdefender.total = 0;
+    window.inventory.kaseyaEndpoint.total = 0;
+    window.inventory.kaseyaEndpointPro.total = 0;
+    window.inventory.kaseyaUser.total = 0;
+    // soma lotes ativos
+    (window.inventoryBatches||[]).forEach(b=>{
+        if (batchIsActive(b)){
+            if (window.inventory[b.type]){
+                window.inventory[b.type].total += (parseInt(b.quantity)||0);
             }
         }
-
-        // Funções de navegação
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-pane').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.nav-tabs button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-            
-            if (tabName === 'dashboard') {
-                updateDashboard();
-            } else if (tabName === 'inventory') {
-                updateInventoryDisplay();
-            } else if (tabName === 'clients') {
-                updateClientsTable();
-            } else if (tabName === 'licenses') {
-                updateLicensesTable();
-                updateClientSelect();
-            } else if (tabName === 'reports') {
-                updateReportsTable();
-            }
+    });
+}
+function updateInventoryUsed(){
+    window.inventory.bitdefender.used = 0;
+    window.inventory.kaseyaEndpoint.used = 0;
+    window.inventory.kaseyaEndpointPro.used = 0;
+    window.inventory.kaseyaUser.used = 0;
+    (window.licenses||[]).forEach(license=>{
+        if (!isLicenseActive(license)) return;
+        const qty = license.quantity || 1;
+        if (license.software==='BitDefender') window.inventory.bitdefender.used += qty;
+        else if (license.software==='Kaseya'){
+            if (license.kaseyaType==='endpoint') window.inventory.kaseyaEndpoint.used += qty;
+            else if (license.kaseyaType==='endpointPro') window.inventory.kaseyaEndpointPro.used += qty;
+            else if (license.kaseyaType==='user') window.inventory.kaseyaUser.used += qty;
         }
-
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        function updatePriceInputs() {
-            document.getElementById('bitdefenderPrice').value = window.prices.bitdefender;
-            document.getElementById('kaseyaEndpointPrice').value = window.prices.kaseyaEndpoint;
-            document.getElementById('kaseyaEndpointProPrice').value = window.prices.kaseyaEndpointPro;
-            document.getElementById('kaseyaUserPrice').value = window.prices.kaseyaUser;
-            document.getElementById('acronisWorkloadPrice').value = window.prices.acronisWorkload;
-            document.getElementById('acronisStoragePrice').value = window.prices.acronisStorage;
-        }
-
-        function updateInventoryInputs() {
-            document.getElementById('bitdefenderTotal').value = window.inventory.bitdefender.total;
-            document.getElementById('kaseyaEndpointTotal').value = window.inventory.kaseyaEndpoint.total;
-            document.getElementById('kaseyaEndpointProTotal').value = window.inventory.kaseyaEndpointPro.total;
-            document.getElementById('kaseyaUserTotal').value = window.inventory.kaseyaUser.total;
-        }
-
-        function updateInventoryUsed() {
-            // Reset todos os contadores
-            window.inventory.bitdefender.used = 0;
-            window.inventory.kaseyaEndpoint.used = 0;
-            window.inventory.kaseyaEndpointPro.used = 0;
-            window.inventory.kaseyaUser.used = 0;
-
-            // Contar licenças ativas
-            window.licenses.forEach(license => {
-                if (!isLicenseActive(license)) return;
-                
-                const quantity = license.quantity || 1;
-                
-                if (license.software === 'BitDefender') {
-                    window.inventory.bitdefender.used += quantity;
-                } else if (license.software === 'Kaseya') {
-                    if (license.kaseyaType === 'endpoint') {
-                        window.inventory.kaseyaEndpoint.used += quantity;
-                    } else if (license.kaseyaType === 'endpointPro') {
-                        window.inventory.kaseyaEndpointPro.used += quantity;
-                    } else if (license.kaseyaType === 'user') {
-                        window.inventory.kaseyaUser.used += quantity;
-                    }
-                }
-            });
-        }
-
-        function isLicenseActive(license) {
-            const today = new Date();
-            const endDate = new Date(license.endDate);
-            return endDate >= today;
-        }
-
-        function getLicenseStatus(license) {
-            const today = new Date();
-            const endDate = new Date(license.endDate);
-            const daysUntilExpiry = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-            
-            if (daysUntilExpiry < 0) {
-                return { status: 'Expirada', class: 'badge-danger' };
-            } else if (daysUntilExpiry <= 30) {
-                return { status: 'Expirando', class: 'badge-warning' };
-            } else {
-                return { status: 'Ativa', class: 'badge-success' };
-            }
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR');
-        }
-
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
-
-        function getKaseyaTypeLabel(type) {
-            const labels = {
-                'endpoint': 'Kaseya 365 Endpoint',
-                'endpointPro': 'Kaseya 365 Endpoint Pro', 
-                'user': 'Kaseya 365 User'
-            };
-            return labels[type] || type;
-        }
-
-        // ===== FUNÇÕES DE INVENTÁRIO =====
-        function updateInventory(type) {
-            const totalInput = document.getElementById(`${type}Total`);
-            const total = parseInt(totalInput.value) || 0;
-            
-            window.inventory[type].total = total;
-            localStorage.setItem('inventory', JSON.stringify(window.inventory));
-            
-            updateInventoryDisplay();
-            updateDashboard();
-            
-            const typeLabel = type === 'bitdefender' ? 'BitDefender' : 
-                             type === 'kaseyaEndpoint' ? 'Kaseya 365 Endpoint' :
-                             type === 'kaseyaEndpointPro' ? 'Kaseya 365 Endpoint Pro' :
-                             'Kaseya 365 User';
-            
-            showNotification(`Inventário ${typeLabel} atualizado com sucesso!`);
-        }
-
-        function updateInventoryDisplay() {
-            const summaryContainer = document.getElementById('inventorySummary');
-            const detailsContainer = document.getElementById('inventoryDetails');
-            
-            let summaryHTML = '';
-            let detailsHTML = '';
-            
-            const inventoryTypes = [
-                { key: 'bitdefender', label: 'BitDefender' },
-                { key: 'kaseyaEndpoint', label: 'Kaseya 365 Endpoint' },
-                { key: 'kaseyaEndpointPro', label: 'Kaseya 365 Endpoint Pro' },
-                { key: 'kaseyaUser', label: 'Kaseya 365 User' }
-            ];
-            
-            inventoryTypes.forEach(({ key, label }) => {
-                const data = window.inventory[key];
-                const percentage = data.total > 0 ? (data.used / data.total) * 100 : 0;
-                const available = data.total - data.used;
-                
-                summaryHTML += `
-                    <div class="inventory-card">
-                        <div class="inventory-header">
-                            <div class="inventory-title">${label}</div>
-                            <div>${data.used}/${data.total}</div>
-                        </div>
-                        <div class="inventory-progress">
-                            <div class="inventory-progress-bar" style="width: ${percentage}%"></div>
-                        </div>
-                        <div class="inventory-details">
-                            <span>Disponível: ${available}</span>
-                            <span class="${available < 5 ? 'text-danger' : 'text-success'}">
-                                ${available < 5 ? 'Baixo estoque' : 'OK'}
-                            </span>
-                        </div>
+    });
+}
+function updateInventoryDisplay(){
+    const summary = document.getElementById('inventorySummary');
+    const details = document.getElementById('inventoryDetails');
+    let summaryHTML = ''; let detailsHTML = '';
+    const types = [
+        { key:'bitdefender', label:'BitDefender' },
+        { key:'kaseyaEndpoint', label:'Kaseya 365 Endpoint' },
+        { key:'kaseyaEndpointPro', label:'Kaseya 365 Endpoint Pro' },
+        { key:'kaseyaUser', label:'Kaseya 365 User' }
+    ];
+    types.forEach(({key,label})=>{
+        const d = window.inventory[key];
+        const pct = d.total>0 ? (d.used/d.total)*100 : 0;
+        const avail = d.total - d.used;
+        summaryHTML += `
+            <div class="inventory-card">
+                <div class="inventory-header"><div class="inventory-title">${label}</div><div>${d.used}/${d.total}</div></div>
+                <div class="inventory-progress"><div class="inventory-progress-bar" style="width:${pct}%"></div></div>
+                <div class="inventory-details"><span>Disponível: ${avail}</span><span class="${avail<5?'text-danger':'text-success'}">${avail<5?'Baixo estoque':'OK'}</span></div>
+            </div>`;
+        detailsHTML += `
+            <div class="inventory-card">
+                <div class="inventory-header">
+                    <div class="inventory-title">${label}</div>
+                    <div style="font-size:1.5rem;font-weight:bold;color:#2f3542;">${d.used}/${d.total}</div>
+                </div>
+                <div class="inventory-progress"><div class="inventory-progress-bar" style="width:${pct}%"></div></div>
+                <div class="inventory-details">
+                    <div>
+                        <strong>Total compradas:</strong> ${d.total}<br />
+                        <strong>Em uso:</strong> ${d.used}<br />
+                        <strong>Disponíveis:</strong> ${avail}
                     </div>
-                `;
-                
-                detailsHTML += `
-                    <div class="inventory-card">
-                        <div class="inventory-header">
-                            <div class="inventory-title">${label}</div>
-                            <div style="font-size: 1.5rem; font-weight: bold; color: #2f3542;">
-                                ${data.used}/${data.total}
-                            </div>
-                        </div>
-                        <div class="inventory-progress">
-                            <div class="inventory-progress-bar" style="width: ${percentage}%"></div>
-                        </div>
-                        <div class="inventory-details">
-                            <div>
-                                <strong>Total compradas:</strong> ${data.total}<br>
-                                <strong>Em uso:</strong> ${data.used}<br>
-                                <strong>Disponíveis:</strong> ${available}
-                            </div>
-                            <div style="text-align: right;">
-                                ${available < 5 ? 
-                                    '<span style="color: #ff6b6b;">Estoque baixo</span>' : 
-                                    '<span style="color: #00d2d3;">Estoque OK</span>'
-                                }
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            summaryContainer.innerHTML = summaryHTML;
-            detailsContainer.innerHTML = detailsHTML;
-        }
+                    <div style="text-align:right;">${avail<5?'<span class="text-danger">Estoque baixo</span>':'<span class="text-success">Estoque OK</span>'}</div>
+                </div>
+            </div>`;
+    });
+    summary.innerHTML = summaryHTML; details.innerHTML = detailsHTML;
+}
 
-        // ===== FUNÇÕES DE CLIENTES =====
-        function addClient() {
-            const name = document.getElementById('clientName').value.trim();
-            const email = document.getElementById('clientEmail').value.trim();
-            const phone = document.getElementById('clientPhone').value.trim();
-            
-            if (!name || !email) {
-                showNotification('Nome e email são obrigatórios!', 'error');
-                return;
-            }
-            
-            const clientData = {
-                id: Date.now(),
-                name,
-                email,
-                phone,
-                createdAt: new Date().toISOString()
-            };
-            
-            window.clients.push(clientData);
-            localStorage.setItem('clients', JSON.stringify(window.clients));
-            
-            document.getElementById('clientName').value = '';
-            document.getElementById('clientEmail').value = '';
-            document.getElementById('clientPhone').value = '';
-            
-            updateClientsTable();
-            updateClientSelect();
-            updateDashboard();
-            showNotification('Cliente adicionado com sucesso!');
-        }
+// ====== INVENTÁRIO - LOTES (NOVO) ======
+function getPeriodStatus(startDate, endDate){
+    const today = new Date(); const s = new Date(startDate); const e = new Date(endDate);
+    if (isNaN(s) || isNaN(e)) return { status: 'Inválido', class: 'badge-danger' };
+    if (e < today) return { status: 'Expirado', class: 'badge-danger' };
+    const days = daysBetween(today, e);
+    if (s > today) return { status: 'Futuro', class: 'badge-warning' };
+    if (days <= 30) return { status: 'Expirando', class: 'badge-warning' };
+    return { status: 'Ativo', class: 'badge-success' };
+}
+function renderInventoryBatchesTable(){
+    const tb = document.getElementById('inventoryBatchesTable');
+    if (!window.inventoryBatches.length){ tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#747d8c;">Nenhum lote cadastrado</td></tr>'; return; }
+    const sorted = [...window.inventoryBatches].sort((a,b)=> new Date(a.endDate) - new Date(b.endDate));
+    const rows = sorted.map(b=>{
+        const status = getPeriodStatus(b.startDate, b.endDate);
+        const typeLabel = {
+            bitdefender:'BitDefender',
+            kaseyaEndpoint:'Kaseya 365 Endpoint',
+            kaseyaEndpointPro:'Kaseya 365 Endpoint Pro',
+            kaseyaUser:'Kaseya 365 User'
+        }[b.type] || b.type;
+        return `<tr>
+            <td>${typeLabel}</td>
+            <td>${b.quantity}</td>
+            <td>${formatDate(b.startDate)}</td>
+            <td>${formatDate(b.endDate)}</td>
+            <td><span class="badge ${status.class}">${status.status}</span></td>
+            <td class="row-actions">
+                <button class="btn btn-warning btn-small" onclick="editInventoryBatch(${b.id})">Editar</button>
+                <button class="btn btn-danger btn-small" onclick="removeInventoryBatch(${b.id})">Remover</button>
+            </td>
+        </tr>`;
+    }).join('');
+    tb.innerHTML = rows;
+}
+function clearBatchForm(){
+    document.getElementById('batchType').value = '';
+    document.getElementById('batchQuantity').value = '';
+    document.getElementById('batchStartDate').value = '';
+    document.getElementById('batchEndDate').value = '';
+}
+function cancelEditBatch(){
+    window.editingBatchId = null;
+    document.getElementById('batchSaveBtn').textContent = 'Adicionar Lote';
+    document.getElementById('batchCancelBtn').style.display = 'none';
+    clearBatchForm();
+}
+function saveInventoryBatch(){
+    const type = document.getElementById('batchType').value;
+    const quantity = parseInt(document.getElementById('batchQuantity').value)||0;
+    const startDate = document.getElementById('batchStartDate').value;
+    const endDate = document.getElementById('batchEndDate').value;
+    if (!type || !quantity || !startDate || !endDate){ showNotification('Preencha tipo, quantidade e vigência completa.', 'error'); return; }
+    if (new Date(startDate) > new Date(endDate)){ showNotification('Data de início não pode ser maior que a data de fim.', 'error'); return; }
+    if (window.editingBatchId){
+        const idx = window.inventoryBatches.findIndex(b=> b.id === window.editingBatchId);
+        if (idx>=0){ Object.assign(window.inventoryBatches[idx], { type, quantity, startDate, endDate }); }
+        showNotification('Lote atualizado com sucesso!');
+    } else {
+        window.inventoryBatches.push({ id: Date.now(), type, quantity, startDate, endDate, createdAt: new Date().toISOString() });
+        showNotification('Lote adicionado com sucesso!');
+    }
+    localStorage.setItem('inventoryBatches', JSON.stringify(window.inventoryBatches));
+    recalcInventoryFromBatches();
+    updateInventoryUsed();
+    updateInventoryDisplay();
+    updateDashboard();
+    renderInventoryBatchesTable();
+    cancelEditBatch();
+}
+function editInventoryBatch(id){
+    const b = window.inventoryBatches.find(x=> x.id===id); if (!b) return;
+    document.getElementById('batchType').value = b.type;
+    document.getElementById('batchQuantity').value = b.quantity;
+    document.getElementById('batchStartDate').value = b.startDate;
+    document.getElementById('batchEndDate').value = b.endDate;
+    window.editingBatchId = id;
+    document.getElementById('batchSaveBtn').textContent = 'Salvar Edição';
+    document.getElementById('batchCancelBtn').style.display = '';
+}
+function removeInventoryBatch(id){
+    if (!confirm('Tem certeza que deseja remover este lote?')) return;
+    window.inventoryBatches = window.inventoryBatches.filter(b=> b.id !== id);
+    localStorage.setItem('inventoryBatches', JSON.stringify(window.inventoryBatches));
+    recalcInventoryFromBatches();
+    updateInventoryUsed();
+    updateInventoryDisplay();
+    updateDashboard();
+    renderInventoryBatchesTable();
+    showNotification('Lote removido com sucesso!');
+}
 
-        function removeClient(clientId) {
-            if (!confirm('Tem certeza? Isso também removerá todas as licenças do cliente.')) return;
-            
-            window.clients = window.clients.filter(c => c.id !== clientId);
-            window.licenses = window.licenses.filter(l => l.clientId !== clientId);
-            
-            localStorage.setItem('clients', JSON.stringify(window.clients));
-            localStorage.setItem('licenses', JSON.stringify(window.licenses));
-            
-            updateInventoryUsed();
-            updateClientsTable();
-            updateLicensesTable();
-            updateClientSelect();
-            updateDashboard();
-            updateInventoryDisplay();
-            showNotification('Cliente removido com sucesso!');
-        }
+// ====== CLIENTES ======
+function addClient(){
+    const name = document.getElementById('clientName').value.trim();
+    const email = document.getElementById('clientEmail').value.trim();
+    const phone = document.getElementById('clientPhone').value.trim();
+    if (!name || !email){ showNotification('Nome e email são obrigatórios!', 'error'); return; }
+    if (window.editingClientId){
+        const idx = window.clients.findIndex(c=> c.id===window.editingClientId);
+        if (idx>=0){ Object.assign(window.clients[idx], { name, email, phone }); }
+        window.editingClientId = null;
+        document.getElementById('clientSaveBtn').textContent = 'Adicionar Cliente';
+        document.getElementById('clientCancelBtn').style.display = 'none';
+        showNotification('Cliente atualizado com sucesso!');
+    } else {
+        const clientData = { id: Date.now(), name, email, phone, createdAt: new Date().toISOString() };
+        window.clients.push(clientData);
+        showNotification('Cliente adicionado com sucesso!');
+    }
+    localStorage.setItem('clients', JSON.stringify(window.clients));
+    document.getElementById('clientName').value = '';
+    document.getElementById('clientEmail').value = '';
+    document.getElementById('clientPhone').value = '';
+    updateClientsTable(); updateClientSelect(); updateDashboard();
+}
+function editClient(id){
+    const c = window.clients.find(x=> x.id===id); if (!c) return;
+    document.getElementById('clientName').value = c.name;
+    document.getElementById('clientEmail').value = c.email;
+    document.getElementById('clientPhone').value = c.phone || '';
+    window.editingClientId = id;
+    document.getElementById('clientSaveBtn').textContent = 'Salvar Edição';
+    document.getElementById('clientCancelBtn').style.display = '';
+}
+function cancelEditClient(){
+    window.editingClientId = null;
+    document.getElementById('clientName').value = '';
+    document.getElementById('clientEmail').value = '';
+    document.getElementById('clientPhone').value = '';
+    document.getElementById('clientSaveBtn').textContent = 'Adicionar Cliente';
+    document.getElementById('clientCancelBtn').style.display = 'none';
+}
+function removeClient(clientId){
+    if (!confirm('Tem certeza? Isso também removerá todas as licenças do cliente.')) return;
+    window.clients = window.clients.filter(c=> c.id!==clientId);
+    window.licenses = window.licenses.filter(l=> l.clientId!==clientId);
+    localStorage.setItem('clients', JSON.stringify(window.clients));
+    localStorage.setItem('licenses', JSON.stringify(window.licenses));
+    updateInventoryUsed(); updateClientsTable(); updateLicensesTable(); updateClientSelect(); updateDashboard(); updateInventoryDisplay();
+    showNotification('Cliente removido com sucesso!');
+}
+function updateClientsTable(){
+    const tb = document.getElementById('clientsTable');
+    if (!window.clients.length){ tb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#747d8c;">Nenhum cliente cadastrado</td></tr>'; return; }
+    const html = window.clients.map(c=>{
+        const count = window.licenses.filter(l=> l.clientId===c.id).length;
+        return `<tr>
+            <td>${c.name}</td>
+            <td>${c.email}</td>
+            <td>${c.phone || '-'}</td>
+            <td>${count}</td>
+            <td class="row-actions">
+                <button class="btn btn-warning btn-small" onclick="editClient(${c.id})">Editar</button>
+                <button class="btn btn-danger btn-small" onclick="removeClient(${c.id})">Remover</button>
+            </td>
+        </tr>`;
+    }).join('');
+    tb.innerHTML = html;
+}
+function updateClientSelect(){
+    const sel = document.getElementById('licenseClient');
+    let html = '<option value="">Selecione um cliente</option>';
+    html += window.clients.map(c=> `<option value="${c.id}">${c.name}</option>`).join('');
+    sel.innerHTML = html;
+}
 
-        function updateClientsTable() {
-            const tableBody = document.getElementById('clientsTable');
-            
-            if (window.clients.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #747d8c;">Nenhum cliente cadastrado</td></tr>';
-                return;
-            }
-            
-            const html = window.clients.map(client => {
-                const clientLicenses = window.licenses.filter(l => l.clientId === client.id);
-                
-                return `
-                    <tr>
-                        <td>${client.name}</td>
-                        <td>${client.email}</td>
-                        <td>${client.phone || '-'}</td>
-                        <td>${clientLicenses.length}</td>
-                        <td>
-                            <button class="btn btn-danger btn-small" onclick="removeClient(${client.id})">
-                                Remover
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tableBody.innerHTML = html;
-        }
+// ====== LICENÇAS ======
+function isLicenseActive(license){ const today = new Date(); const end = new Date(license.endDate); return end >= today; }
+function getLicenseStatus(license){
+    const today = new Date(); const end = new Date(license.endDate); const days = daysBetween(today, end);
+    if (days < 0) return { status:'Expirada', class:'badge-danger' };
+    if (days <= 30) return { status:'Expirando', class:'badge-warning' };
+    return { status:'Ativa', class:'badge-success' };
+}
+function showSoftwareConfig(){
+    const sw = document.getElementById('licenseSoftware').value;
+    const kaseya = document.getElementById('kaseyaConfig');
+    const acronis = document.getElementById('acronisConfig');
+    kaseya.style.display = 'none'; acronis.style.display = 'none';
+    if (sw==='Kaseya') kaseya.style.display = 'block';
+    else if (sw==='Acronis') acronis.style.display = 'block';
+}
+function selectKaseyaType(type){
+    document.querySelectorAll('#kaseyaConfig .model-option').forEach(o=> o.classList.remove('active'));
+    const map = { endpoint:'kaseyaEndpoint', endpointPro:'kaseyaEndpoint', user:'kaseyaUser' };
+    // corrigir ids corretos
+    const idMap = { endpoint:'kaseyaEndpoint', endpointPro:'kaseyaEndpointPro', user:'kaseyaUser' };
+    document.getElementById(idMap[type]).classList.add('active');
+    const list = document.getElementById('kaseyaModulesList');
+    list.innerHTML = (window.kaseyaModules[type]||[]).map(m=> `<li>${m}</li>`).join('');
+}
+function selectAcronisModel(model){
+    document.querySelectorAll('#acronisConfig .model-option').forEach(o=> o.classList.remove('active'));
+    document.getElementById(model+'Model').classList.add('active');
+    const fields = document.getElementById('acronisFields');
+    if (model==='workload') fields.innerHTML = `<div class="form-group"><label>Número de Dispositivos</label><input type="number" id="acronisDevices" class="form-control" placeholder="Quantos dispositivos" /></div>`;
+    else fields.innerHTML = `<div class="form-group"><label>Armazenamento (GB)</label><input type="number" id="acronisStorage" class="form-control" placeholder="GB de armazenamento" /></div>`;
+}
+function resetLicenseForm(){
+    document.getElementById('licenseClient').value = '';
+    document.getElementById('licenseSoftware').value = '';
+    document.getElementById('licenseQuantity').value = '1';
+    document.getElementById('licenseStartDate').value = '';
+    document.getElementById('licenseEndDate').value = '';
+    document.getElementById('kaseyaConfig').style.display = 'none';
+    document.getElementById('acronisConfig').style.display = 'none';
+}
+function cancelEditLicense(){
+    window.editingLicenseId = null;
+    document.getElementById('licenseSaveBtn').textContent = 'Adicionar Licença';
+    document.getElementById('licenseCancelBtn').style.display = 'none';
+    resetLicenseForm();
+}
+function addLicense(){
+    const clientId = parseInt(document.getElementById('licenseClient').value);
+    const software = document.getElementById('licenseSoftware').value;
+    const quantity = parseInt(document.getElementById('licenseQuantity').value)||1;
+    const startDate = document.getElementById('licenseStartDate').value;
+    const endDate = document.getElementById('licenseEndDate').value;
+    if (!clientId || !software || !startDate || !endDate){ showNotification('Todos os campos são obrigatórios!', 'error'); return; }
 
-        function updateClientSelect() {
-            const select = document.getElementById('licenseClient');
-            
-            let html = '<option value="">Selecione um cliente</option>';
-            html += window.clients.map(client => 
-                `<option value="${client.id}">${client.name}</option>`
-            ).join('');
-            
-            select.innerHTML = html;
-        }
+    // objeto base
+    const data = { clientId, software, quantity, startDate, endDate };
 
-        // ===== FUNÇÕES DE CONFIGURAÇÃO DE SOFTWARE =====
-        function showSoftwareConfig() {
-            const software = document.getElementById('licenseSoftware').value;
-            const kaseyaConfig = document.getElementById('kaseyaConfig');
-            const acronisConfig = document.getElementById('acronisConfig');
-            
-            // Esconder todas as configurações
-            kaseyaConfig.style.display = 'none';
-            acronisConfig.style.display = 'none';
-            
-            if (software === 'Kaseya') {
-                kaseyaConfig.style.display = 'block';
-            } else if (software === 'Acronis') {
-                acronisConfig.style.display = 'block';
-            }
-        }
-
-        function selectKaseyaType(type) {
-            // Remover active de todas as opções
-            document.querySelectorAll('#kaseyaConfig .model-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            
-            // Adicionar active na opção selecionada
-            const typeMap = {
-                'endpoint': 'kaseyaEndpoint',
-                'endpointPro': 'kaseyaEndpointPro', 
-                'user': 'kaseyaUser'
-            };
-            
-            document.getElementById(typeMap[type]).classList.add('active');
-            
-            // Atualizar lista de módulos
-            const modulesList = document.getElementById('kaseyaModulesList');
-            const modules = window.kaseyaModules[type];
-            
-            modulesList.innerHTML = modules.map(module => 
-                `<li>${module}</li>`
-            ).join('');
-        }
-
-        function selectAcronisModel(model) {
-            document.querySelectorAll('#acronisConfig .model-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            
-            document.getElementById(model + 'Model').classList.add('active');
-            
-            const fieldsContainer = document.getElementById('acronisFields');
-            
-            if (model === 'workload') {
-                fieldsContainer.innerHTML = `
-                    <div class="form-group">
-                        <label>Número de Dispositivos:</label>
-                        <input type="number" id="acronisDevices" class="form-control" placeholder="Quantos dispositivos">
-                    </div>
-                `;
-            } else {
-                fieldsContainer.innerHTML = `
-                    <div class="form-group">
-                        <label>Armazenamento (GB):</label>
-                        <input type="number" id="acronisStorage" class="form-control" placeholder="GB de armazenamento">
-                    </div>
-                `;
-            }
-        }
-
-        // ===== FUNÇÕES DE LICENÇAS =====
-        function addLicense() {
-            const clientId = parseInt(document.getElementById('licenseClient').value);
-            const software = document.getElementById('licenseSoftware').value;
-            const quantity = parseInt(document.getElementById('licenseQuantity').value) || 1;
-            const startDate = document.getElementById('licenseStartDate').value;
-            const endDate = document.getElementById('licenseEndDate').value;
-            
-            if (!clientId || !software || !startDate || !endDate) {
-                showNotification('Todos os campos são obrigatórios!', 'error');
-                return;
-            }
-            
-            const licenseData = {
-                id: Date.now(),
-                clientId,
-                software,
-                quantity,
-                startDate,
-                endDate,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Configurações específicas por software
-            if (software === 'Kaseya') {
-                const activeKaseya = document.querySelector('#kaseyaConfig .model-option.active');
-                if (!activeKaseya) {
-                    showNotification('Selecione o tipo de licença Kaseya!', 'error');
-                    return;
-                }
-                
-                const kaseyaType = activeKaseya.id.replace('kaseya', '').replace('Endpoint', 'endpoint').replace('EndpointPro', 'endpointPro').replace('User', 'user');
-                licenseData.kaseyaType = kaseyaType;
-                
-                // Verificar disponibilidade no inventário
-                const inventoryKey = kaseyaType === 'endpoint' ? 'kaseyaEndpoint' : 
-                                   kaseyaType === 'endpointPro' ? 'kaseyaEndpointPro' : 'kaseyaUser';
-                const available = window.inventory[inventoryKey].total - window.inventory[inventoryKey].used;
-                
-                if (available < quantity) {
-                    showNotification(`Apenas ${available} licenças ${getKaseyaTypeLabel(kaseyaType)} disponíveis no inventário!`, 'error');
-                    return;
-                }
-                
-            } else if (software === 'Acronis') {
-                const isWorkloadModel = document.getElementById('workloadModel').classList.contains('active');
-                licenseData.acronisModel = isWorkloadModel ? 'workload' : 'storage';
-                
-                if (isWorkloadModel) {
-                    const devices = document.getElementById('acronisDevices').value;
-                    if (!devices) {
-                        showNotification('Número de dispositivos é obrigatório para modelo Per-Workload!', 'error');
-                        return;
-                    }
-                    licenseData.acronisDevices = parseInt(devices);
-                } else {
-                    const storage = document.getElementById('acronisStorage').value;
-                    if (!storage) {
-                        showNotification('Quantidade de armazenamento é obrigatória para modelo Per-GB!', 'error');
-                        return;
-                    }
-                    licenseData.acronisStorage = parseInt(storage);
-                }
-                
-            } else if (software === 'BitDefender') {
-                // Verificar disponibilidade de inventário BitDefender
-                const available = window.inventory.bitdefender.total - window.inventory.bitdefender.used;
-                if (available < quantity) {
-                    showNotification(`Apenas ${available} licenças BitDefender disponíveis no inventário!`, 'error');
-                    return;
-                }
-            }
-            
-            window.licenses.push(licenseData);
-            localStorage.setItem('licenses', JSON.stringify(window.licenses));
-            
-            // Limpar formulário
-            document.getElementById('licenseClient').value = '';
-            document.getElementById('licenseSoftware').value = '';
-            document.getElementById('licenseQuantity').value = '1';
-            document.getElementById('licenseStartDate').value = '';
-            document.getElementById('licenseEndDate').value = '';
-            document.getElementById('kaseyaConfig').style.display = 'none';
-            document.getElementById('acronisConfig').style.display = 'none';
-            
-            updateInventoryUsed();
-            updateLicensesTable();
-            updateDashboard();
-            updateInventoryDisplay();
-            updateReportsTable();
-            showNotification('Licença adicionada com sucesso!');
-        }
-
-        function renewLicense(licenseId) {
-            const license = window.licenses.find(l => l.id === licenseId);
-            const endDate = new Date(license.endDate);
-            endDate.setFullYear(endDate.getFullYear() + 1);
-            
-            license.endDate = endDate.toISOString().split('T')[0];
-            localStorage.setItem('licenses', JSON.stringify(window.licenses));
-            
-            updateLicensesTable();
-            updateDashboard();
-            showNotification('Licença renovada por mais 1 ano!');
-        }
-
-        function removeLicense(licenseId) {
-            if (!confirm('Tem certeza que deseja remover esta licença?')) return;
-            
-            window.licenses = window.licenses.filter(l => l.id !== licenseId);
-            localStorage.setItem('licenses', JSON.stringify(window.licenses));
-            
-            updateInventoryUsed();
-            updateLicensesTable();
-            updateDashboard();
-            updateInventoryDisplay();
-            updateReportsTable();
-            showNotification('Licença removida com sucesso!');
-        }
-
-        function updateLicensesTable() {
-            const tableBody = document.getElementById('licensesTable');
-            
-            if (window.licenses.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #747d8c;">Nenhuma licença cadastrada</td></tr>';
-                return;
-            }
-            
-            const sortedLicenses = [...window.licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-            
-            const html = sortedLicenses.map(license => {
-                const client = window.clients.find(c => c.id === license.clientId);
-                const statusInfo = getLicenseStatus(license);
-                
-                let typeDetails = '';
-                if (license.software === 'Kaseya') {
-                    typeDetails = getKaseyaTypeLabel(license.kaseyaType);
-                } else if (license.software === 'Acronis') {
-                    if (license.acronisModel === 'workload') {
-                        typeDetails = `Per-Workload (${license.acronisDevices} dispositivos)`;
-                    } else {
-                        typeDetails = `Per-GB (${license.acronisStorage} GB)`;
-                    }
-                } else {
-                    typeDetails = '-';
-                }
-                
-                return `
-                    <tr>
-                        <td>${client ? client.name : 'Cliente não encontrado'}</td>
-                        <td>${license.software}</td>
-                        <td>${typeDetails}</td>
-                        <td>${license.quantity || 1}</td>
-                        <td>${formatDate(license.startDate)}</td>
-                        <td>${formatDate(license.endDate)}</td>
-                        <td><span class="badge ${statusInfo.class}">${statusInfo.status}</span></td>
-                        <td>
-                            <button class="btn btn-warning btn-small" onclick="renewLicense(${license.id})">
-                                Renovar
-                            </button>
-                            <button class="btn btn-danger btn-small" onclick="removeLicense(${license.id})">
-                                Remover
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tableBody.innerHTML = html;
-        }
-
-        // ===== FUNÇÕES DE RELATÓRIOS =====
-        function savePrices() {
-            window.prices.bitdefender = parseFloat(document.getElementById('bitdefenderPrice').value) || 0;
-            window.prices.kaseyaEndpoint = parseFloat(document.getElementById('kaseyaEndpointPrice').value) || 0;
-            window.prices.kaseyaEndpointPro = parseFloat(document.getElementById('kaseyaEndpointProPrice').value) || 0;
-            window.prices.kaseyaUser = parseFloat(document.getElementById('kaseyaUserPrice').value) || 0;
-            window.prices.acronisWorkload = parseFloat(document.getElementById('acronisWorkloadPrice').value) || 0;
-            window.prices.acronisStorage = parseFloat(document.getElementById('acronisStoragePrice').value) || 0;
-            
-            localStorage.setItem('prices', JSON.stringify(window.prices));
-            
-            updateReportsTable();
-            updateDashboard();
-            showNotification('Preços salvos com sucesso!');
-        }
-
-        function calculateLicenseCost(license) {
-            if (!isLicenseActive(license)) return 0;
-            
-            const quantity = license.quantity || 1;
-            
-            switch (license.software) {
-                case 'BitDefender':
-                    return window.prices.bitdefender * quantity;
-                case 'Kaseya':
-                    if (license.kaseyaType === 'endpoint') {
-                        return window.prices.kaseyaEndpoint * quantity;
-                    } else if (license.kaseyaType === 'endpointPro') {
-                        return window.prices.kaseyaEndpointPro * quantity;
-                    } else if (license.kaseyaType === 'user') {
-                        return window.prices.kaseyaUser * quantity;
-                    }
-                    return 0;
-                case 'Acronis':
-                    if (license.acronisModel === 'workload') {
-                        return window.prices.acronisWorkload * (license.acronisDevices || 1);
-                    } else {
-                        return window.prices.acronisStorage * (license.acronisStorage || 0);
-                    }
-                default:
-                    return 0;
+    // validações específicas
+    if (software==='Kaseya'){
+        const active = document.querySelector('#kaseyaConfig .model-option.active');
+        if (!active){ showNotification('Selecione o tipo de licença Kaseya!', 'error'); return; }
+        // mapear id -> tipo
+        let kaseyaType = 'endpoint';
+        if (active.id==='kaseyaEndpoint') kaseyaType = 'endpoint';
+        else if (active.id==='kaseyaEndpointPro') kaseyaType = 'endpointPro';
+        else if (active.id==='kaseyaUser') kaseyaType = 'user';
+        data.kaseyaType = kaseyaType;
+        // checar inventário considerando edição
+        const invKey = kaseyaType==='endpoint' ? 'kaseyaEndpoint' : (kaseyaType==='endpointPro' ? 'kaseyaEndpointPro' : 'kaseyaUser');
+        let available = window.inventory[invKey].total - window.inventory[invKey].used;
+        if (window.editingLicenseId){
+            const current = window.licenses.find(l=> l.id===window.editingLicenseId);
+            if (current && isLicenseActive(current) && current.software==='Kaseya' && current.kaseyaType===kaseyaType){
+                available += (current.quantity||1); // devolve o que já estava alocado
             }
         }
-
-        function updateReportsTable() {
-            const tableBody = document.getElementById('reportsTable');
-            
-            if (window.clients.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #747d8c;">Nenhum cliente cadastrado</td></tr>';
-                updateFinancialSummary(0, 0);
-                return;
+        if (available < quantity){ showNotification(`Apenas ${available} licenças ${getKaseyaTypeLabel(kaseyaType)} disponíveis no inventário!`, 'error'); return; }
+    } else if (software==='Acronis'){
+        const isWorkload = document.getElementById('workloadModel').classList.contains('active');
+        data.acronisModel = isWorkload ? 'workload' : 'storage';
+        if (isWorkload){
+            const devices = parseInt(document.getElementById('acronisDevices')?.value||'');
+            if (!devices){ showNotification('Número de dispositivos é obrigatório para modelo Per-Workload!', 'error'); return; }
+            data.acronisDevices = devices;
+        } else {
+            const storage = parseInt(document.getElementById('acronisStorage')?.value||'');
+            if (!storage){ showNotification('Quantidade de armazenamento é obrigatória para modelo Per-GB!', 'error'); return; }
+            data.acronisStorage = storage;
+        }
+    } else if (software==='BitDefender'){
+        let available = window.inventory.bitdefender.total - window.inventory.bitdefender.used;
+        if (window.editingLicenseId){
+            const current = window.licenses.find(l=> l.id===window.editingLicenseId);
+            if (current && isLicenseActive(current) && current.software==='BitDefender'){
+                available += (current.quantity||1);
             }
-            
-            let totalMonthly = 0;
-            
-            const html = window.clients.map(client => {
-                const clientLicenses = window.licenses.filter(l => l.clientId === client.id);
-                
-                let bitdefenderCost = 0;
-                let kaseyaEndpointCost = 0;
-                let kaseyaEndpointProCost = 0;
-                let kaseyaUserCost = 0;
-                let acronisCost = 0;
-                
-                clientLicenses.forEach(license => {
-                    const cost = calculateLicenseCost(license);
-                    
-                    switch (license.software) {
-                        case 'BitDefender':
-                            bitdefenderCost += cost;
-                            break;
-                        case 'Kaseya':
-                            if (license.kaseyaType === 'endpoint') {
-                                kaseyaEndpointCost += cost;
-                            } else if (license.kaseyaType === 'endpointPro') {
-                                kaseyaEndpointProCost += cost;
-                            } else if (license.kaseyaType === 'user') {
-                                kaseyaUserCost += cost;
-                            }
-                            break;
-                        case 'Acronis':
-                            acronisCost += cost;
-                            break;
-                    }
-                });
-                
-                const clientTotal = bitdefenderCost + kaseyaEndpointCost + kaseyaEndpointProCost + kaseyaUserCost + acronisCost;
-                totalMonthly += clientTotal;
-                
-                return `
-                    <tr>
-                        <td>${client.name}</td>
-                        <td>${formatCurrency(bitdefenderCost)}</td>
-                        <td>${formatCurrency(kaseyaEndpointCost)}</td>
-                        <td>${formatCurrency(kaseyaEndpointProCost)}</td>
-                        <td>${formatCurrency(kaseyaUserCost)}</td>
-                        <td>${formatCurrency(acronisCost)}</td>
-                        <td><strong>${formatCurrency(clientTotal)}</strong></td>
-                        <td><strong>${formatCurrency(clientTotal * 12)}</strong></td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tableBody.innerHTML = html;
-            updateFinancialSummary(totalMonthly, window.clients.length);
         }
+        if (available < quantity){ showNotification(`Apenas ${available} licenças BitDefender disponíveis no inventário!`, 'error'); return; }
+    }
 
-        function updateFinancialSummary(totalMonthly, clientCount) {
-            document.getElementById('monthlyRevenue').textContent = formatCurrency(totalMonthly);
-            document.getElementById('annualRevenue').textContent = formatCurrency(totalMonthly * 12);
-            document.getElementById('avgPerClient').textContent = formatCurrency(clientCount > 0 ? totalMonthly / clientCount : 0);
-        }
+    if (window.editingLicenseId){
+        const idx = window.licenses.findIndex(l=> l.id===window.editingLicenseId);
+        if (idx>=0){ window.licenses[idx] = Object.assign(window.licenses[idx], data); }
+        window.editingLicenseId = null;
+        document.getElementById('licenseSaveBtn').textContent = 'Adicionar Licença';
+        document.getElementById('licenseCancelBtn').style.display = 'none';
+        showNotification('Licença atualizada com sucesso!');
+    } else {
+        window.licenses.push(Object.assign({ id: Date.now(), createdAt: new Date().toISOString() }, data));
+        showNotification('Licença adicionada com sucesso!');
+    }
+    localStorage.setItem('licenses', JSON.stringify(window.licenses));
+    resetLicenseForm();
+    updateInventoryUsed(); updateLicensesTable(); updateDashboard(); updateInventoryDisplay(); updateReportsTable();
+}
+function editLicense(id){
+    const l = window.licenses.find(x=> x.id===id); if (!l) return;
+    document.getElementById('licenseClient').value = l.clientId;
+    document.getElementById('licenseSoftware').value = l.software;
+    document.getElementById('licenseQuantity').value = l.quantity || 1;
+    document.getElementById('licenseStartDate').value = l.startDate;
+    document.getElementById('licenseEndDate').value = l.endDate;
+    showSoftwareConfig();
+    if (l.software==='Kaseya' && l.kaseyaType){ selectKaseyaType(l.kaseyaType); }
+    if (l.software==='Acronis' && l.acronisModel){
+        selectAcronisModel(l.acronisModel);
+        if (l.acronisModel==='workload') document.getElementById('acronisDevices').value = l.acronisDevices||'';
+        else document.getElementById('acronisStorage').value = l.acronisStorage||'';
+    }
+    window.editingLicenseId = id;
+    document.getElementById('licenseSaveBtn').textContent = 'Salvar Edição';
+    document.getElementById('licenseCancelBtn').style.display = '';
+}
+function removeLicense(id){
+    if (!confirm('Tem certeza que deseja remover esta licença?')) return;
+    window.licenses = window.licenses.filter(l=> l.id!==id);
+    localStorage.setItem('licenses', JSON.stringify(window.licenses));
+    updateInventoryUsed(); updateLicensesTable(); updateDashboard(); updateInventoryDisplay(); updateReportsTable();
+    showNotification('Licença removida com sucesso!');
+}
+function updateLicensesTable(){
+    const tb = document.getElementById('licensesTable');
+    if (!window.licenses.length){ tb.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#747d8c;">Nenhuma licença cadastrada</td></tr>'; return; }
+    const sorted = [...window.licenses].sort((a,b)=> new Date(a.endDate) - new Date(b.endDate));
+    const rows = sorted.map(l=>{
+        const client = window.clients.find(c=> c.id===l.clientId);
+        const status = getLicenseStatus(l);
+        let typeDetails = '-';
+        if (l.software==='Kaseya') typeDetails = getKaseyaTypeLabel(l.kaseyaType);
+        else if (l.software==='Acronis') typeDetails = l.acronisModel==='workload' ? `Per-Workload (${l.acronisDevices||0} dispositivos)` : `Per-GB (${l.acronisStorage||0} GB)`;
+        return `<tr>
+            <td>${client?client.name:'Cliente não encontrado'}</td>
+            <td>${l.software}</td>
+            <td>${typeDetails}</td>
+            <td>${l.quantity||1}</td>
+            <td>${formatDate(l.startDate)}</td>
+            <td>${formatDate(l.endDate)}</td>
+            <td><span class="badge ${status.class}">${status.status}</span></td>
+            <td class="row-actions">
+                <button class="btn btn-warning btn-small" onclick="editLicense(${l.id})">Editar</button>
+                <button class="btn btn-danger btn-small" onclick="removeLicense(${l.id})">Remover</button>
+            </td>
+        </tr>`;
+    }).join('');
+    tb.innerHTML = rows;
+}
 
-        // ===== FUNÇÕES DO DASHBOARD =====
-        function updateDashboard() {
-            const totalClients = window.clients.length;
-            const totalLicenses = window.licenses.length;
-            const activeLicenses = window.licenses.filter(isLicenseActive).length;
-            const expiringLicenses = window.licenses.filter(license => {
-                const statusInfo = getLicenseStatus(license);
-                return statusInfo.status === 'Expirando';
-            }).length;
-            
-            let totalMonthlyCost = 0;
-            window.licenses.forEach(license => {
-                totalMonthlyCost += calculateLicenseCost(license);
-            });
-            
-            document.getElementById('totalClients').textContent = totalClients;
-            document.getElementById('totalLicenses').textContent = totalLicenses;
-            document.getElementById('activeLicenses').textContent = activeLicenses;
-            document.getElementById('expiringLicenses').textContent = expiringLicenses;
-            document.getElementById('totalMonthlyCost').textContent = formatCurrency(totalMonthlyCost);
-            
-            updateAlerts();
-            updateDashboardTable();
-            updateInventoryDisplay();
-        }
+// ====== RELATÓRIOS ======
+function calculateLicenseCost(license){
+    if (!isLicenseActive(license)) return 0;
+    const qty = license.quantity || 1;
+    switch (license.software){
+        case 'BitDefender': return window.prices.bitdefender * qty;
+        case 'Kaseya':
+            if (license.kaseyaType==='endpoint') return window.prices.kaseyaEndpoint * qty;
+            if (license.kaseyaType==='endpointPro') return window.prices.kaseyaEndpointPro * qty;
+            if (license.kaseyaType==='user') return window.prices.kaseyaUser * qty; return 0;
+        case 'Acronis':
+            if (license.acronisModel==='workload') return window.prices.acronisWorkload * (license.acronisDevices||1);
+            return window.prices.acronisStorage * (license.acronisStorage||0);
+        default: return 0;
+    }
+}
+function updateReportsTable(){
+    const tb = document.getElementById('reportsTable');
+    if (!window.clients.length){ tb.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#747d8c;">Nenhum cliente cadastrado</td></tr>'; updateFinancialSummary(0,0); return; }
+    let totalMonthly = 0;
+    const rows = window.clients.map(c=>{
+        const cls = window.licenses.filter(l=> l.clientId===c.id);
+        let b=0, ke=0, kp=0, ku=0, a=0;
+        cls.forEach(l=>{
+            const cost = calculateLicenseCost(l);
+            if (l.software==='BitDefender') b += cost;
+            else if (l.software==='Kaseya'){
+                if (l.kaseyaType==='endpoint') ke += cost; else if (l.kaseyaType==='endpointPro') kp += cost; else if (l.kaseyaType==='user') ku += cost;
+            } else if (l.software==='Acronis') a += cost;
+        });
+        const total = b+ke+kp+ku+a; totalMonthly += total;
+        return `<tr>
+            <td>${c.name}</td>
+            <td>${formatCurrency(b)}</td>
+            <td>${formatCurrency(ke)}</td>
+            <td>${formatCurrency(kp)}</td>
+            <td>${formatCurrency(ku)}</td>
+            <td>${formatCurrency(a)}</td>
+            <td><strong>${formatCurrency(total)}</strong></td>
+            <td><strong>${formatCurrency(total*12)}</strong></td>
+        </tr>`;
+    }).join('');
+    tb.innerHTML = rows; updateFinancialSummary(totalMonthly, window.clients.length);
+}
+function updateFinancialSummary(totalMonthly, clientCount){
+    document.getElementById('monthlyRevenue').textContent = formatCurrency(totalMonthly);
+    document.getElementById('annualRevenue').textContent = formatCurrency(totalMonthly*12);
+    document.getElementById('avgPerClient').textContent = formatCurrency(clientCount>0 ? totalMonthly/clientCount : 0);
+}
 
-        function updateAlerts() {
-            const alertsContainer = document.getElementById('alertsContainer');
-            let alertsHTML = '';
-            
-            const expiredLicenses = window.licenses.filter(license => {
-                const statusInfo = getLicenseStatus(license);
-                return statusInfo.status === 'Expirada';
-            });
-            
-            if (expiredLicenses.length > 0) {
-                alertsHTML += `
-                    <div class="alert alert-warning">
-                        <strong>Atenção:</strong> ${expiredLicenses.length} licença(s) expirada(s). 
-                        Verifique a tabela abaixo para mais detalhes.
-                    </div>
-                `;
-            }
-            
-            // Verificar estoque baixo para todos os tipos
-            const lowStock = [];
-            const inventoryTypes = [
-                { key: 'bitdefender', label: 'BitDefender' },
-                { key: 'kaseyaEndpoint', label: 'Kaseya 365 Endpoint' },
-                { key: 'kaseyaEndpointPro', label: 'Kaseya 365 Endpoint Pro' },
-                { key: 'kaseyaUser', label: 'Kaseya 365 User' }
-            ];
-            
-            inventoryTypes.forEach(({ key, label }) => {
-                const available = window.inventory[key].total - window.inventory[key].used;
-                if (available < 5 && window.inventory[key].total > 0) {
-                    lowStock.push(label);
-                }
-            });
-            
-            if (lowStock.length > 0) {
-                alertsHTML += `
-                    <div class="alert alert-warning">
-                        <strong>Estoque Baixo:</strong> ${lowStock.join(', ')} com menos de 5 licenças disponíveis.
-                    </div>
-                `;
-            }
-            
-            alertsContainer.innerHTML = alertsHTML;
-        }
+// ====== DASHBOARD ======
+function updateAlerts(){
+    const c = document.getElementById('alertsContainer'); let html='';
+    const expired = window.licenses.filter(l=> getLicenseStatus(l).status==='Expirada');
+    if (expired.length){ html += `<div class="alert alert-warning"><strong>Atenção:</strong> ${expired.length} licença(s) expirada(s). Verifique a tabela abaixo para mais detalhes.</div>`; }
+    const low = []; const types=[ {key:'bitdefender',label:'BitDefender'}, {key:'kaseyaEndpoint',label:'Kaseya 365 Endpoint'}, {key:'kaseyaEndpointPro',label:'Kaseya 365 Endpoint Pro'}, {key:'kaseyaUser',label:'Kaseya 365 User'} ];
+    types.forEach(({key,label})=>{ const avail = window.inventory[key].total - window.inventory[key].used; if (avail < 5 && window.inventory[key].total>0) low.push(label); });
+    if (low.length){ html += `<div class="alert alert-warning"><strong>Estoque Baixo:</strong> ${low.join(', ')} com menos de 5 licenças disponíveis.</div>`; }
+    c.innerHTML = html;
+}
+function updateDashboardTable(){
+    const tb = document.getElementById('dashboardTable');
+    if (!window.licenses.length){ tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#747d8c;">Nenhuma licença cadastrada</td></tr>'; return; }
+    const sorted = [...window.licenses].sort((a,b)=> new Date(a.endDate) - new Date(b.endDate));
+    const rows = sorted.slice(0,10).map(l=>{
+        const client = window.clients.find(c=> c.id===l.clientId);
+        const status = getLicenseStatus(l);
+        let sw = l.software; if (l.software==='Kaseya') sw = getKaseyaTypeLabel(l.kaseyaType);
+        return `<tr>
+            <td>${client?client.name:'Cliente não encontrado'}</td>
+            <td>${sw}</td>
+            <td>${l.quantity||1}</td>
+            <td>${formatDate(l.endDate)}</td>
+            <td><span class="badge ${status.class}">${status.status}</span></td>
+            <td>-</td>
+        </tr>`;
+    }).join('');
+    tb.innerHTML = rows;
+}
+function updateDashboard(){
+    const totalClients = window.clients.length;
+    const totalLicenses = window.licenses.length;
+    const activeLicenses = window.licenses.filter(isLicenseActive).length;
+    const expiringLicenses = window.licenses.filter(l=> getLicenseStatus(l).status==='Expirando').length;
+    let totalMonthlyCost = 0; window.licenses.forEach(l=> totalMonthlyCost += calculateLicenseCost(l));
+    document.getElementById('totalClients').textContent = totalClients;
+    document.getElementById('totalLicenses').textContent = totalLicenses;
+    document.getElementById('activeLicenses').textContent = activeLicenses;
+    document.getElementById('expiringLicenses').textContent = expiringLicenses;
+    document.getElementById('totalMonthlyCost').textContent = formatCurrency(totalMonthlyCost);
+    updateAlerts(); updateDashboardTable(); updateInventoryDisplay();
+}
 
-        function updateDashboardTable() {
-            const tableBody = document.getElementById('dashboardTable');
-            
-            if (window.licenses.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #747d8c;">Nenhuma licença cadastrada</td></tr>';
-                return;
-            }
-            
-            const sortedLicenses = [...window.licenses].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-            
-            const html = sortedLicenses.slice(0, 10).map(license => {
-                const client = window.clients.find(c => c.id === license.clientId);
-                const statusInfo = getLicenseStatus(license);
-                
-                let softwareDisplay = license.software;
-                if (license.software === 'Kaseya') {
-                    softwareDisplay = getKaseyaTypeLabel(license.kaseyaType);
-                }
-                
-                return `
-                    <tr>
-                        <td>${client ? client.name : 'Cliente não encontrado'}</td>
-                        <td>${softwareDisplay}</td>
-                        <td>${license.quantity || 1}</td>
-                        <td>${formatDate(license.endDate)}</td>
-                        <td><span class="badge ${statusInfo.class}">${statusInfo.status}</span></td>
-                        <td>
-                            <button class="btn btn-warning btn-small" onclick="renewLicense(${license.id})">
-                                Renovar
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tableBody.innerHTML = html;
-        }
+// ====== INIT ======
+window.showTab = showTab;
+window.savePrices = savePrices;
+window.addClient = addClient; window.editClient = editClient; window.cancelEditClient = cancelEditClient; window.removeClient = removeClient; window.updateClientsTable = updateClientsTable; window.updateClientSelect = updateClientSelect;
+window.addLicense = addLicense; window.editLicense = editLicense; window.cancelEditLicense = cancelEditLicense; window.removeLicense = removeLicense;
+window.showSoftwareConfig = showSoftwareConfig; window.selectKaseyaType = selectKaseyaType; window.selectAcronisModel = selectAcronisModel;
+window.saveInventoryBatch = saveInventoryBatch; window.editInventoryBatch = editInventoryBatch; window.removeInventoryBatch = removeInventoryBatch; window.cancelEditBatch = cancelEditBatch;
 
-        // Tornar funções globais
-        window.showTab = showTab;
-        window.updateInventory = updateInventory;
-        window.addClient = addClient;
-        window.removeClient = removeClient;
-        window.addLicense = addLicense;
-        window.renewLicense = renewLicense;
-        window.removeLicense = removeLicense;
-        window.showSoftwareConfig = showSoftwareConfig;
-        window.selectKaseyaType = selectKaseyaType;
-        window.selectAcronisModel = selectAcronisModel;
-        window.savePrices = savePrices;
-
-        // Inicializar aplicação
-        loadData();
-    </script>
+loadData();
+</script>
 </body>
 </html>
